@@ -1,0 +1,26 @@
+{
+    "name": "ashevchuk/social-api",
+    "description": "Social network API lib",
+    "minimum-stability": "stable",
+    "authors": [
+        {
+            "name": "Andrew Shevchuk",
+            "email": "shevchuk@be-aware.com.ua"
+        }
+    ],
+    "autoload": {
+        "psr-0": {
+            "SocialAPI\\": "src"
+        }
+    },
+    "require": {
+        "php-64bit": ">=5.5",
+        "psr/log": "v1.0.0",
+        "symfony/console": "^2.7"
+    },
+    "require-dev": {
+        "phpunit/phpunit": "^4.7",
+        "phpunit/phpunit-mock-objects": "^2.3",
+        "phpunit/php-code-coverage": "^2.1"
+    }
+}
