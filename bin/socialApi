@@ -1,0 +1,36 @@
+#!/usr/bin/env php
+<?php
+
+define('COMMAND_PATTERN', 'Command.php');
+
+// Looking for composer
+if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
+    require __DIR__ . '/../vendor/autoload.php';
+} else {
+    echo "\n****** No composer autoload file was found ******\n\n";
+    exit;
+}
+
+// Looking for commands folder
+if (is_dir(__DIR__ . '/../src/SocialAPI/Lib/Command')) {
+    define('COMMAND_PATH', __DIR__ . '/../src/SocialAPI/Lib/Command');
+} else {
+    echo "\n****** No command folder was found ******\n\n";
+    exit;
+}
+
+// Init console application
+use Symfony\Component\Console\Application;
+
+$app = new Application();
+
+// Add commands
+$commandList = scandir(COMMAND_PATH);
+foreach ($commandList as $name) {
+    if (strpos($name, COMMAND_PATTERN)) {
+        $name = "SocialAPI\\Lib\\Command\\" . str_replace('.php', '', $name);
+        $app->add(new $name());
+    }
+}
+
+$app->run();
