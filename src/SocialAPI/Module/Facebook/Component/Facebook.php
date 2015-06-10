@@ -5,6 +5,7 @@ namespace SocialAPI\Module\Facebook\Component;
 use Facebook\FacebookRedirectLoginHelper;
 use Facebook\FacebookRequestException;
 use Facebook\FacebookSession;
+use SocialAPI\Lib\Component\ApiConfigInterface;
 use SocialAPI\Lib\Component\ApiInterface;
 use SocialAPI\Lib\Util\LoggerTrait;
 use SocialAPI\Module\Exception\FacebookException;
@@ -77,17 +78,19 @@ class Facebook implements ApiInterface
     /**
      * Init facebook api class
      *
-     * @param FacebookConfig $config
+     * @param ApiConfigInterface $config
+     * @param Request $request
+     * @param null|string $accessToken
      */
-    public function __construct(FacebookConfig $config, Request $request)
+    public function __construct(ApiConfigInterface $config, Request $request, $accessToken = null)
     {
         $this->config  = $config;
         $this->request = $request;
 
         $this->initApi($this->getConfig()->getAppId(), $this->getConfig()->getAppSecret());
 
-        if ($this->getConfig()->getAccessTocken() !== null) {
-            $this->setAccessToken($this->getConfig()->getAccessTocken());
+        if ($accessToken !== null) {
+            $this->setAccessToken($accessToken);
             $this->initSessionFromAccessCode($this->getAccessToken());
         }
     }
@@ -112,13 +115,13 @@ class Facebook implements ApiInterface
     }
 
     /**
-     * Init facebook sesion object from access token
+     * Init facebook session object from access token
      *
-     * @param bool $reinit
+     * @param bool $reInit
      */
-    public function initSessionFromAccessCode($reinit = false)
+    public function initSessionFromAccessCode($reInit = false)
     {
-        if ($this->getSession() === null || $reinit === true) {
+        if ($this->getSession() === null || $reInit === true) {
             $this->session = new FacebookSession($this->getAccessToken());
         }
     }

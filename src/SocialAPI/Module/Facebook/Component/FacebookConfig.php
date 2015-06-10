@@ -2,7 +2,9 @@
 
 namespace SocialAPI\Module\Facebook\Component;
 
-class FacebookConfig
+use SocialAPI\Lib\Component\ApiConfigInterface;
+
+class FacebookConfig implements ApiConfigInterface
 {
     /**
      * @var int
@@ -23,11 +25,6 @@ class FacebookConfig
      * @var string[] List of scopes for user
      */
     private $scopeList = [];
-
-    /**
-     * @var null
-     */
-    private $accessTocken;
 
     /**
      * @return int
@@ -62,24 +59,14 @@ class FacebookConfig
     }
 
     /**
-     * @return null
-     */
-    public function getAccessTocken()
-    {
-        return $this->accessTocken;
-    }
-
-    /**
      * Init config
      *
      * @param int $appId
      * @param string $appSecret
      * @param string $redirectUrl
      * @param array $scopeList
-     *
-     * @throws \InvalidArgumentException
      */
-    public function __construct($appId, $appSecret, $redirectUrl, array $scopeList, $accessToken = null)
+    public function __construct($appId, $appSecret, $redirectUrl, array $scopeList)
     {
         if (!is_int($appId)) {
             throw new \InvalidArgumentException('Only int appId allowed');
@@ -99,14 +86,9 @@ class FacebookConfig
             throw new \InvalidArgumentException('You must set at least one scope');
         }
 
-        if ($accessToken !== null && !is_string($accessToken)) {
-            throw new \InvalidArgumentException('Only string allowed for accessToken');
-        }
-
         $this->appId        = $appId;
         $this->appSecret    = $appSecret;
         $this->redirectUrl  = $redirectUrl;
         $this->scopeList    = $scopeList;
-        $this->accessTocken = $accessToken;
     }
 }
