@@ -3,10 +3,13 @@
 namespace SocialAPI\Module\Facebook\Component;
 
 use Facebook\FacebookRedirectLoginHelper;
+use Facebook\FacebookRequest;
 use Facebook\FacebookRequestException;
 use Facebook\FacebookSession;
 use SocialAPI\Lib\Component\ApiConfigInterface;
 use SocialAPI\Lib\Component\ApiInterface;
+use SocialAPI\Lib\Model\ApiResponse\Profile;
+use SocialAPI\Lib\Model\ApiResponse\ProfileInterface;
 use SocialAPI\Lib\Util\LoggerTrait;
 use SocialAPI\Module\Exception\FacebookException;
 use Symfony\Component\HttpFoundation\Request;
@@ -91,7 +94,7 @@ class Facebook implements ApiInterface
 
         if ($accessToken !== null) {
             $this->setAccessToken($accessToken);
-            $this->initSessionFromAccessCode($this->getAccessToken());
+            $this->initSession($this->getAccessToken());
         }
     }
 
@@ -119,26 +122,10 @@ class Facebook implements ApiInterface
      *
      * @param bool $reInit
      */
-    public function initSessionFromAccessCode($reInit = false)
+    public function initSession($reInit = false)
     {
         if ($this->getSession() === null || $reInit === true) {
             $this->session = new FacebookSession($this->getAccessToken());
-        }
-    }
-
-    /**
-     * Init facebook session object after redirect
-     */
-    public function initSessionFromRedirect()
-    {
-        $helper = new FacebookRedirectLoginHelper($this->getConfig()->getRedirectUrl());
-
-        try {
-            $this->session = $helper->getSessionFromRedirect();
-        } catch (FacebookRequestException $e) {
-            throw new FacebookException($e->getMessage());
-        } catch (\Exception $e) {
-            throw new FacebookException($e->getMessage());
         }
     }
 
@@ -153,5 +140,131 @@ class Facebook implements ApiInterface
         $loginUrl = $helper->getLoginUrl($this->getConfig()->getScopeList());
 
         return $loginUrl;
+    }
+
+    /**
+     * Generate user logout url
+     *
+     * @return string
+     * @throws \Facebook\FacebookSDKException
+     */
+    public function generateLogoutUrl()
+    {
+        $helper    = new FacebookRedirectLoginHelper($this->getConfig()->getRedirectUrl());
+        $logoutUrl = $helper->getLogoutUrl($this->getSession(), $this->getConfig()->getRedirectUrl());
+
+        return $logoutUrl;
+    }
+
+    /**
+     * Parse request for code variable and request access token by it
+     *
+     * @throws FacebookException
+     * @throws FacebookRequestException
+     */
+    public function generateAccessTokenFromCode()
+    {
+        // Prepare request params
+        $params = [
+            'client_id'     => $this->getConfig()->getAppId(),
+            'redirect_uri'  => $this->getConfig()->getRedirectUrl(),
+            'client_secret' => $this->getConfig()->getAppSecret(),
+            'code'          => $this->getRequest()->get('code'),
+        ];
+
+        // Making request
+        $request = new FacebookRequest(
+            FacebookSession::newAppSession($this->getConfig()->getAppId(), $this->getConfig()->getAppId()),
+            'GET',
+            '/oauth/access_token',
+            $params
+        );
+
+        // Get response
+        try {
+            $response = $request->execute()->getResponse();
+        } catch (\Exception $e) {
+            $this->getLogger()->error(
+                'Failed while making request to facebook API',
+                [
+                    'class'     => $this,
+                    'exception' => $e,
+                ]
+            );
+            throw new FacebookException('Failed while making request to facebook API');
+        }
+
+        // Few manipulations for backward compatibility
+        $accessToken = null;
+        if (is_object($response) && isset($response->access_token)) {
+            $accessToken = $response->access_token;
+        } elseif (is_array($response) && isset($response['access_token'])) {
+            $accessToken = $response['access_token'];
+        }
+
+        if (isset($accessToken)) {
+            $this->setAccessToken($accessToken);
+            $this->initSession($accessToken);
+        } else {
+            $this->getLogger()->error(
+                'Cant find access token in response',
+                [
+                    'class'    => $this,
+                    'response' => $response,
+                ]
+            );
+            throw new FacebookException('Cant find access token in response');
+        }
+    }
+
+    /**
+     * TODO: Create normal method, because now it is only for test
+     *
+     * @return ProfileInterface
+     */
+    public function getMyProfile()
+    {
+        $response = (new FacebookRequest(
+            $this->getSession(), 'GET', '/me'
+        ))->execute()->getResponse();
+
+        $result = new Profile(
+            $response->id,
+            $response->first_name,
+            $response->last_name,
+            $response->email,
+            ($response->gender === 'male') ? 'male'
+                : (($response->gender === 'female') ? 'female' : null),
+            null,
+            null
+        );
+
+        return $result;
+    }
+
+    /**
+     * @return bool
+     */
+    public function postOnMyWall()
+    {
+
+    }
+
+    /**
+     * @return ProfileInterface[]
+     */
+    public function getMyFriends()
+    {
+
+    }
+
+    /**
+     * @param string|int $memberId
+     *
+     * @return ProfileInterface
+     */
+    public function getMyFriend($memberId)
+    {
+
     }
 }

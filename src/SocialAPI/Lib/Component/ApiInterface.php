@@ -46,11 +46,16 @@ interface ApiInterface
     public function generateLoginUrl();
 
     /**
-     * Parse request for code variable and request access code by it
+     * @return string
+     */
+    public function generateLogoutUrl();
+
+    /**
+     * Parse request for code variable and request access token by it
      *
      * @return void
      */
-    public function generateAccessCodeFromCode();
+    public function generateAccessTokenFromCode();
 
     /**
      * @return ProfileInterface

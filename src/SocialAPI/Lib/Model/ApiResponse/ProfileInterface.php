@@ -20,6 +20,11 @@ interface ProfileInterface
     public function getLastName();
 
     /**
+     * @return string|null
+     */
+    public function getEmail();
+
+    /**
      * @return string|null [male|female]
      */
     public function getGender();
@@ -38,6 +43,7 @@ interface ProfileInterface
      * @param mixed $id
      * @param string $firstName
      * @param null|string $lastName
+     * @param null|string $email
      * @param null|string $gender
      * @param null|\DateTime $birthday
      * @param null|string $avatarUrl
@@ -46,6 +52,7 @@ interface ProfileInterface
         $id,
         $firstName,
         $lastName   = null,
+        $email      = null,
         $gender     = null,
         $birthday   = null,
         $avatarUrl  = null
