@@ -127,7 +127,8 @@ class Facebook implements ApiInterface
      */
     public function initSessionFromRedirect()
     {
-        $helper = new FacebookRedirectLoginHelper();
+        $helper = new FacebookRedirectLoginHelper($this->getConfig()->getRedirectUrl());
+
         try {
             $this->session = $helper->getSessionFromRedirect();
         } catch (FacebookRequestException $e) {
