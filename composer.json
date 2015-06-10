@@ -1,6 +1,7 @@
 {
     "name": "ashevchuk/social-api",
     "description": "Social network API lib",
+    "version": "0.0.1",
     "type": "library",
     "minimum-stability": "stable",
     "authors": [
@@ -9,11 +10,16 @@
             "email": "shevchuk@be-aware.com.ua"
         }
     ],
+
     "autoload": {
         "psr-0": {
             "SocialAPI\\": "src"
         }
     },
+    "bin": [
+      "bin/socialApi"
+    ],
+
     "require": {
         "php-64bit": ">=5.5",
         "psr/log": "v1.0.0",
