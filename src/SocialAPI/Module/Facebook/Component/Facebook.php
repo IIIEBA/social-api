@@ -3,6 +3,7 @@
 namespace SocialAPI\Module\Facebook\Component;
 
 use Facebook\FacebookRedirectLoginHelper;
+use Facebook\FacebookRequestException;
 use Facebook\FacebookSession;
 use SocialAPI\Lib\Component\ApiInterface;
 use SocialAPI\Lib\Util\LoggerTrait;
