@@ -1,6 +1,7 @@
 {
     "name": "ashevchuk/social-api",
     "description": "Social network API lib",
+    "type": "library",
     "minimum-stability": "stable",
     "authors": [
         {
