@@ -6,6 +6,8 @@ use Facebook\FacebookRedirectLoginHelper;
 use Facebook\FacebookSession;
 use SocialAPI\Lib\Component\ApiInterface;
 use SocialAPI\Lib\Util\LoggerTrait;
+use SocialAPI\Module\Exception\FacebookException;
+use Symfony\Component\HttpFoundation\Request;
 
 class Facebook implements ApiInterface
 {
@@ -15,6 +17,11 @@ class Facebook implements ApiInterface
      * @var FacebookConfig
      */
     private $config;
+
+    /**
+     * @var Request
+     */
+    private $request;
 
     /**
      * @var string
@@ -35,11 +42,11 @@ class Facebook implements ApiInterface
     }
 
     /**
-     * @param FacebookConfig $config
+     * @return Request
      */
-    public function setConfig($config)
+    public function getRequest()
     {
-        $this->config = $config;
+        return $this->request;
     }
 
     /**
@@ -71,15 +78,16 @@ class Facebook implements ApiInterface
      *
      * @param FacebookConfig $config
      */
-    public function __construct(FacebookConfig $config)
+    public function __construct(FacebookConfig $config, Request $request)
     {
-        $this->setConfig($config);
+        $this->config  = $config;
+        $this->request = $request;
 
         $this->initApi($this->getConfig()->getAppId(), $this->getConfig()->getAppSecret());
 
         if ($this->getConfig()->getAccessTocken() !== null) {
             $this->setAccessToken($this->getConfig()->getAccessTocken());
-            $this->initSession($this->getAccessToken());
+            $this->initSessionFromAccessCode($this->getAccessToken());
         }
     }
 
@@ -103,24 +111,35 @@ class Facebook implements ApiInterface
     }
 
     /**
-     * Return session object instance
+     * Init facebook sesion object from access token
      *
      * @param bool $reinit
-     *
-     * @return FacebookSession
      */
-    public function initSession($reinit = false)
+    public function initSessionFromAccessCode($reinit = false)
     {
         if ($this->getSession() === null || $reinit === true) {
             $this->session = new FacebookSession($this->getAccessToken());
         }
+    }
 
-        return $this->session;
+    /**
+     * Init facebook session object after redirect
+     */
+    public function initSessionFromRedirect()
+    {
+        $helper = new FacebookRedirectLoginHelper();
+        try {
+            $this->session = $helper->getSessionFromRedirect();
+        } catch (FacebookRequestException $e) {
+            throw new FacebookException($e->getMessage());
+        } catch (\Exception $e) {
+            throw new FacebookException($e->getMessage());
+        }
     }
 
     /**
      * Generate redirect url for facebook auth
-     * 
+     *
      * @return string
      */
     public function generateLoginUrl()
