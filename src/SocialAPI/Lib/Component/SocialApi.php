@@ -123,7 +123,6 @@ class SocialApi implements LoggerAwareInterface
 
     /**
      * Add initialized api to allowed list
-     *
      * @param string $name
      * @param ApiInterface $api
      *
@@ -147,7 +146,6 @@ class SocialApi implements LoggerAwareInterface
 
     /**
      * Get selected API instance
-     *
      * @param string $name
      *
      * @return ApiInterface
@@ -189,7 +187,6 @@ class SocialApi implements LoggerAwareInterface
 
     /**
      * Get Facebook API instance
-     *
      * @return ApiInterface
      * @throws SocialApiException
      */
@@ -211,7 +208,6 @@ class SocialApi implements LoggerAwareInterface
 
     /**
      * Get VK API instance
-     *
      * @return ApiInterface
      * @throws SocialApiException
      */

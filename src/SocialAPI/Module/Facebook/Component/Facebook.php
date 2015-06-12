@@ -81,7 +81,6 @@ class Facebook implements ApiInterface
 
     /**
      * Init facebook api class
-     *
      * @param ApiConfigInterface $config
      * @param Request $request
      * @param null|string $accessToken
@@ -101,7 +100,6 @@ class Facebook implements ApiInterface
 
     /**
      * Init Facebook SDK
-     *
      * @param int $appId
      * @param string $appSecret
      *
@@ -120,7 +118,6 @@ class Facebook implements ApiInterface
 
     /**
      * Init facebook session object from access token
-     *
      * @param bool $reInit
      */
     public function initSession($reInit = false)
@@ -132,7 +129,6 @@ class Facebook implements ApiInterface
 
     /**
      * Generate redirect url for facebook auth
-     *
      * @return string
      */
     public function generateLoginUrl()
@@ -145,7 +141,6 @@ class Facebook implements ApiInterface
 
     /**
      * Generate user logout url
-     *
      * @return string
      * @throws \Facebook\FacebookSDKException
      */
@@ -159,11 +154,9 @@ class Facebook implements ApiInterface
 
     /**
      * Parse request for code variable and request access token by it
-     *
      * @return string Access token
      *
-     * @throws FacebookException
-     * @throws FacebookRequestException
+     * @throws FacebookModuleException
      */
     public function generateAccessTokenFromCode()
     {

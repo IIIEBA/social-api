@@ -52,8 +52,6 @@ interface ApiInterface
 
     /**
      * Parse request for code variable and request access token by it
-     *
-     * @return void
      */
     public function generateAccessTokenFromCode();
 

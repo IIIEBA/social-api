@@ -11,7 +11,6 @@ interface ApiConfigInterface
 {
     /**
      * Check API for enabled status
-     *
      * @return bool
      */
     public function isEnabled();
