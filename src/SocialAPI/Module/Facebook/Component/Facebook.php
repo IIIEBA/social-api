@@ -11,7 +11,7 @@ use SocialAPI\Lib\Component\ApiInterface;
 use SocialAPI\Lib\Model\ApiResponse\Profile;
 use SocialAPI\Lib\Model\ApiResponse\ProfileInterface;
 use SocialAPI\Lib\Util\LoggerTrait;
-use SocialAPI\Module\Exception\FacebookException;
+use SocialAPI\Module\Facebook\Exception\FacebookModuleException;
 use Symfony\Component\HttpFoundation\Request;
 
 class Facebook implements ApiInterface
@@ -68,6 +68,7 @@ class Facebook implements ApiInterface
     public function setAccessToken($accessToken)
     {
         $this->accessToken = $accessToken;
+        $this->initSession();
     }
 
     /**
@@ -159,6 +160,8 @@ class Facebook implements ApiInterface
     /**
      * Parse request for code variable and request access token by it
      *
+     * @return string Access token
+     *
      * @throws FacebookException
      * @throws FacebookRequestException
      */
@@ -191,7 +194,7 @@ class Facebook implements ApiInterface
                     'exception' => $e,
                 ]
             );
-            throw new FacebookException('Failed while making request to facebook API');
+            throw new FacebookModuleException('Failed while making request to facebook API');
         }
 
         // Few manipulations for backward compatibility
@@ -213,8 +216,10 @@ class Facebook implements ApiInterface
                     'response' => $response,
                 ]
             );
-            throw new FacebookException('Cant find access token in response');
+            throw new FacebookModuleException('Cant find access token in response');
         }
+
+        return $accessToken;
     }
 
     /**
@@ -225,16 +230,24 @@ class Facebook implements ApiInterface
     public function getMyProfile()
     {
         $response = (new FacebookRequest(
-            $this->getSession(), 'GET', '/me'
+            $this->getSession(),
+            'GET',
+            '/me'
         ))->execute()->getResponse();
+
+        $gender = null;
+        if ($response->gender === 'male') {
+            $gender = 'male';
+        } elseif ($response->gender === 'female') {
+            $gender = 'female';
+        }
 
         $result = new Profile(
             $response->id,
             $response->first_name,
             $response->last_name,
             $response->email,
-            ($response->gender === 'male') ? 'male'
-                : (($response->gender === 'female') ? 'female' : null),
+            $gender,
             null,
             null
         );

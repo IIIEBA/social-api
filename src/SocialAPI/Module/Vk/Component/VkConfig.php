@@ -4,12 +4,12 @@ namespace SocialAPI\Module\Facebook\Component;
 
 use SocialAPI\Lib\Component\ApiConfigInterface;
 
-class FacebookConfig implements ApiConfigInterface
+class VkConfig implements ApiConfigInterface
 {
     /**
      * @var bool
      */
-    private $isEnabled;
+    private $isEnabled = false;
 
     /**
      * @var int

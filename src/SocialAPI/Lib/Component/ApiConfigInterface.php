@@ -2,8 +2,19 @@
 
 namespace SocialAPI\Lib\Component;
 
+/**
+ * Interface ApiConfigInterface
+ *
+ * @package SocialAPI\Lib\Component
+ */
 interface ApiConfigInterface
 {
+    /**
+     * Check API for enabled status
+     *
+     * @return bool
+     */
+    public function isEnabled();
     /**
      * @return string
      */
