@@ -3,20 +3,17 @@
 namespace SocialAPI\Module\Vk\Component;
 
 use GuzzleHttp\Client;
-use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
+use SocialAPI\Lib\Component\BaseApi;
 use SocialAPI\Lib\Component\ApiConfigInterface;
 use SocialAPI\Lib\Component\ApiInterface;
 use SocialAPI\Lib\Model\ApiResponse\Profile;
 use SocialAPI\Lib\Model\ApiResponse\ProfileInterface;
-use SocialAPI\Lib\Util\Logger\LoggerTrait;
-use SocialAPI\Module\Vk\Exception\VkModuleException;
+use SocialAPI\Module\Vk\Exception\VkModuleApiException;
 use Symfony\Component\HttpFoundation\Request;
 
-class Vk implements ApiInterface, LoggerAwareInterface
+class Vk extends BaseApi implements ApiInterface
 {
-    use LoggerTrait;
-
     /**
      * Vk API version
      */
@@ -43,32 +40,16 @@ class Vk implements ApiInterface, LoggerAwareInterface
     private $httpClient;
 
     /**
-     * @var ApiConfigInterface
-     */
-    private $config;
-
-    /**
-     * @var Request
-     */
-    private $request;
-
-    /**
-     * @var string
-     */
-    private $accessToken;
-
-    /**
      * List of fields which need to get
      * @var string
      */
     private $profileFieldsList;
 
     /**
+     * Set few params into api
      * @param ApiConfigInterface $config
      * @param Request $request
      * @param LoggerInterface $logger
-     *
-     * @internal param null|string $accessToken
      */
     public function __construct(ApiConfigInterface $config, Request $request, LoggerInterface $logger = null)
     {
@@ -83,6 +64,7 @@ class Vk implements ApiInterface, LoggerAwareInterface
     }
 
     /**
+     * Get http client
      * @return Client
      */
     public function getHttpClient()
@@ -98,54 +80,12 @@ class Vk implements ApiInterface, LoggerAwareInterface
     }
 
     /**
-     * @return ApiConfigInterface
-     */
-    public function getConfig()
-    {
-        return $this->config;
-    }
-
-    /**
-     * @return Request
-     */
-    public function getRequest()
-    {
-        return $this->request;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAccessToken()
-    {
-        return $this->accessToken;
-    }
-
-    /**
+     * Get profile fields list
      * @return array
      */
     public function getProfileFieldsList()
     {
         return $this->profileFieldsList;
-    }
-
-    /**
-     * @param string $accessToken
-     */
-    public function setAccessToken($accessToken)
-    {
-        if (!is_string($accessToken)) {
-            $msg = 'Only string allowed for accessToken';
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object' => $this
-                ]
-            );
-            throw new \InvalidArgumentException($msg);
-        }
-
-        $this->accessToken = $accessToken;
     }
 
     /**
@@ -190,77 +130,37 @@ class Vk implements ApiInterface, LoggerAwareInterface
     }
 
     /**
+     * Return logout link which will be called after general flow
      * @return string
      */
     public function generateLogoutUrl()
     {
-        // TODO: Implement generateLogoutUrl() method.
-
-        return $this->getConfig()->getRedirectUrl();
-    }
-
-    /**
-     * Parse request from API and generate access token
-     * @return string
-     * @throws VkModuleException
-     */
-    public function parseLoginResponse()
-    {
-        $accessToken = null;
-        if ($this->getRequest()->get('code') !== null) {
-            if (
-                $this->getRequest()->get('state') === null
-                || !isset($_SESSION['state'])
-                || $this->getRequest()->get('state') != $_SESSION['state']
-            ) {
-                $msg = 'State doesnt match in request and response';
-                $this->getLogger()->error(
-                    $msg,
-                    [
-                        'object' => $this,
-                    ]
-                );
-
-                throw new VkModuleException($msg);
-            }
-
-            $accessToken = $this->generateAccessTokenFromCode($this->getRequest()->get('code'));
-        } elseif ($this->getRequest()->get('error') !== null) {
-            $msg = 'Failed to parse response from Vk API';
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object' => $this,
-                ]
-            );
-
-            throw new VkModuleException($msg);
-        }
-
-        if ($accessToken === null) {
-            $msg = 'Strange response was given from Vk API';
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object' => $this,
-                ]
-            );
-
-            throw new VkModuleException($msg);
-        }
-
-        return $accessToken;
+        return '/';
     }
 
     /**
      * Generate access token from code
-     * @param string $code
      *
-     * @return string
-     * @throws VkModuleException
+*@param string $code
+     *
+*@return string
+
+     * @throws VkModuleApiException
      */
     public function generateAccessTokenFromCode($code)
     {
+        if (!is_string($code)) {
+            $msg = 'Only string allowed for code';
+            $this->getLogger()->error(
+                $msg,
+                [
+                    'object' => $this,
+                ]
+            );
+
+            throw new \InvalidArgumentException($msg);
+        }
+
         $params = [
             'client_id'     => $this->getConfig()->getAppId(),
             'client_secret' => $this->getConfig()->getAppSecret(),
@@ -280,7 +180,7 @@ class Vk implements ApiInterface, LoggerAwareInterface
                 ]
             );
 
-            throw new VkModuleException($msg);
+            throw new VkModuleApiException($msg);
         }
 
         if (empty($response->getBody())) {
@@ -293,7 +193,7 @@ class Vk implements ApiInterface, LoggerAwareInterface
                 ]
             );
 
-            throw new VkModuleException($msg);
+            throw new VkModuleApiException($msg);
         }
 
 
@@ -309,7 +209,7 @@ class Vk implements ApiInterface, LoggerAwareInterface
                 ]
             );
 
-            throw new VkModuleException($msg);
+            throw new VkModuleApiException($msg);
         }
 
         $this->setAccessToken($result->access_token);
@@ -319,11 +219,13 @@ class Vk implements ApiInterface, LoggerAwareInterface
 
     /**
      * Prepare data for calling selected API action and call it
-     * @param string $method
+     *
+*@param string $method
      * @param array $params
      *
-     * @return object
-     * @throws VkModuleException
+*@return object
+
+     * @throws VkModuleApiException
      */
     public function callApiMethod($method, array $params = [])
     {
@@ -336,7 +238,7 @@ class Vk implements ApiInterface, LoggerAwareInterface
                 ]
             );
 
-            throw new VkModuleException($msg);
+            throw new VkModuleApiException($msg);
         }
 
         if (!is_string($method)) {
@@ -348,7 +250,7 @@ class Vk implements ApiInterface, LoggerAwareInterface
                 ]
             );
 
-            throw new VkModuleException($msg);
+            throw new VkModuleApiException($msg);
         }
 
         $params = array_merge(['access_token' => $this->getAccessToken()], $params);
@@ -365,7 +267,7 @@ class Vk implements ApiInterface, LoggerAwareInterface
                 ]
             );
 
-            throw new VkModuleException($msg);
+            throw new VkModuleApiException($msg);
         }
 
         if (empty($response->getBody())) {
@@ -378,7 +280,7 @@ class Vk implements ApiInterface, LoggerAwareInterface
                 ]
             );
 
-            throw new VkModuleException($msg);
+            throw new VkModuleApiException($msg);
         }
 
         $result = json_decode($response->getBody());
@@ -395,27 +297,20 @@ class Vk implements ApiInterface, LoggerAwareInterface
                 ]
             );
 
-            throw new VkModuleException($msg);
+            throw new VkModuleApiException($msg);
         }
 
         return $result;
     }
 
     /**
-     * @throws VkModuleException
+     * Post msg on my wall
+     *
+*@throws VkModuleApiException
      */
     public function postOnMyWall()
     {
-        throw new VkModuleException('This action is not available for sites by ip :(');
-    }
-
-    /**
-     * Get profile data for current user
-     * @return ProfileInterface
-     */
-    public function getMyProfile()
-    {
-        return $this->getProfile();
+        throw new VkModuleApiException('This action is not available for sites by ip :(');
     }
 
     /**
@@ -444,18 +339,17 @@ class Vk implements ApiInterface, LoggerAwareInterface
 
     /**
      * Get selected profile data
-     * @param string|null $memberIds
-     *
+     * @param string|null $memberId
      * @return ProfileInterface
      */
-    public function getProfile($memberIds = null)
+    public function getProfile($memberId = null)
     {
         $params = [
             'fields' => $this->getProfileFieldsList()
         ];
 
-        if ($memberIds !== null) {
-            if (!is_string($memberIds)) {
+        if ($memberId !== null) {
+            if (!is_string($memberId)) {
                 $msg = 'Only string type allowed for member id';
                 $this->getLogger()->error(
                     $msg,
@@ -467,7 +361,7 @@ class Vk implements ApiInterface, LoggerAwareInterface
                 throw new \InvalidArgumentException($msg);
             }
 
-            $params['user_ids'] = $memberIds;
+            $params['user_ids'] = $memberId;
         }
 
         $response = $this->callApiMethod('users.get', $params);
@@ -488,7 +382,6 @@ class Vk implements ApiInterface, LoggerAwareInterface
     /**
      * Convert Vk gender to single format
      * @param null|int $gender
-     *
      * @return null|string
      */
     public function parseGender($gender = null)
@@ -507,8 +400,8 @@ class Vk implements ApiInterface, LoggerAwareInterface
     }
 
     /**
+     * Convert Vk birthday to general format
      * @param null $birthday
-     *
      * @return \DateTimeImmutable|null
      */
     public function parseBirthday($birthday = null)
@@ -528,7 +421,6 @@ class Vk implements ApiInterface, LoggerAwareInterface
     /**
      * Convert Vk avatar url to general format
      * @param null|string $url
-     *
      * @return null
      */
     public function parseAvatarUrl($url = null)

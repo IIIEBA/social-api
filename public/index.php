@@ -1,6 +1,6 @@
 <?php
     use SocialAPI\Module\Facebook\Component\Facebook;
-    use SocialAPI\Module\Facebook\Component\FacebookConfig;
+    use SocialAPI\Module\Facebook\Component\FacebookConfigApiConfig;
     use Symfony\Component\HttpFoundation\Request;
 
     // Looking for composer
@@ -13,7 +13,7 @@
 
     session_start();
 
-    $config = new FacebookConfig(
+    $config = new FacebookConfigApiConfig(
         1412497612344354,
         '18f0694ffd8d0eb6efbaec59fd9947b0',
         'http://apis.home-server.pp.ua/',

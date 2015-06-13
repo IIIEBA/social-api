@@ -2,7 +2,10 @@
 
 namespace SocialAPI\Module\Vk\Exception;
 
-class VkModuleException extends \Exception
+
+use SocialAPI\Lib\Exception\BaseApiException;
+
+class VkModuleApiException extends BaseApiException
 {
 
 }

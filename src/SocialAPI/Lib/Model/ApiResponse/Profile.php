@@ -2,6 +2,11 @@
 
 namespace SocialAPI\Lib\Model\ApiResponse;
 
+/**
+ * Class Profile
+ *
+ * @package SocialAPI\Lib\Model\ApiResponse
+ */
 class Profile implements ProfileInterface
 {
     /**
@@ -40,6 +45,7 @@ class Profile implements ProfileInterface
     private $avatarUrl;
 
     /**
+     * Get id
      * @return mixed
      */
     public function getId()
@@ -48,6 +54,7 @@ class Profile implements ProfileInterface
     }
 
     /**
+     * Get first name
      * @return string
      */
     public function getFirstName()
@@ -56,6 +63,7 @@ class Profile implements ProfileInterface
     }
 
     /**
+     * Get last name
      * @return string|null
      */
     public function getLastName()
@@ -64,6 +72,7 @@ class Profile implements ProfileInterface
     }
 
     /**
+     * Get email
      * @return string|null
      */
     public function getEmail()
@@ -72,6 +81,7 @@ class Profile implements ProfileInterface
     }
 
     /**
+     * Get gender
      * @return string|null [male|female]
      */
     public function getGender()
@@ -80,6 +90,7 @@ class Profile implements ProfileInterface
     }
 
     /**
+     * Get birthday
      * @return \DateTime|null
      */
     public function getBirthday()
@@ -88,6 +99,7 @@ class Profile implements ProfileInterface
     }
 
     /**
+     * Get avatar url
      * @return string|null
      */
     public function getAvatarUrl()
@@ -96,6 +108,7 @@ class Profile implements ProfileInterface
     }
 
     /**
+     * Set fields to model
      * @param mixed $id
      * @param string $firstName
      * @param null|string $lastName

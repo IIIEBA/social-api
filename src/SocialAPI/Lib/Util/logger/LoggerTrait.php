@@ -7,6 +7,7 @@ use Psr\Log\NullLogger;
 
 /**
  * Class LoggerTrait
+ *
  * @package SocialAPI\Lib\Util
  */
 trait LoggerTrait
@@ -14,11 +15,11 @@ trait LoggerTrait
     /**
      * @var LoggerInterface
      */
-    private $logger;
+    protected $logger;
 
     /**
+     * Set selected logger
      * @param LoggerInterface $logger
-     *
      * @return void
      */
     public function setLogger(LoggerInterface $logger)
@@ -27,6 +28,7 @@ trait LoggerTrait
     }
 
     /**
+     * Get logger
      * @return LoggerInterface
      */
     public function getLogger()

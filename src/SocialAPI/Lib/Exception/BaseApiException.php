@@ -7,7 +7,7 @@ namespace SocialAPI\Lib\Exception;
  *
  * @package SocialAPI\Lib\Exception
  */
-class SocialApiException extends \Exception
+class BaseApiException extends SocialApiException
 {
 
 }

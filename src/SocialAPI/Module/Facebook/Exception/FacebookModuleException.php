@@ -2,7 +2,9 @@
 
 namespace SocialAPI\Module\Facebook\Exception;
 
-class FacebookModuleException extends \Exception
+use SocialAPI\Lib\Exception\BaseApiException;
+
+class FacebookModuleApiException extends BaseApiException
 {
 
 }

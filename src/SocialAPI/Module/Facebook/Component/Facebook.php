@@ -6,70 +6,20 @@ use Facebook\FacebookRedirectLoginHelper;
 use Facebook\FacebookRequest;
 use Facebook\FacebookSession;
 use Psr\Log\LoggerInterface;
+use SocialAPI\Lib\Component\BaseApi;
 use SocialAPI\Lib\Component\ApiConfigInterface;
 use SocialAPI\Lib\Component\ApiInterface;
 use SocialAPI\Lib\Model\ApiResponse\Profile;
 use SocialAPI\Lib\Model\ApiResponse\ProfileInterface;
-use SocialAPI\Lib\Util\Logger\LoggerTrait;
-use SocialAPI\Module\Facebook\Exception\FacebookModuleException;
+use SocialAPI\Module\Facebook\Exception\FacebookModuleApiException;
 use Symfony\Component\HttpFoundation\Request;
 
-class Facebook implements ApiInterface
+class Facebook extends BaseApi implements ApiInterface
 {
-    use LoggerTrait;
-
-    /**
-     * @var FacebookConfig
-     */
-    private $config;
-
-    /**
-     * @var Request
-     */
-    private $request;
-
-    /**
-     * @var string
-     */
-    private $accessToken;
-
     /**
      * @var FacebookSession
      */
     private $session;
-
-    /**
-     * @return FacebookConfig
-     */
-    public function getConfig()
-    {
-        return $this->config;
-    }
-
-    /**
-     * @return Request
-     */
-    public function getRequest()
-    {
-        return $this->request;
-    }
-
-    /**
-     * @return string
-     */
-    public function getAccessToken()
-    {
-        return $this->accessToken;
-    }
-
-    /**
-     * @param string $accessToken
-     */
-    public function setAccessToken($accessToken)
-    {
-        $this->accessToken = $accessToken;
-        $this->initSession();
-    }
 
     /**
      * @return FacebookSession
@@ -94,30 +44,17 @@ class Facebook implements ApiInterface
             $this->setLogger($logger);
         }
 
-        $this->initApi($this->getConfig()->getAppId(), $this->getConfig()->getAppSecret());
+        $this->initApi();
     }
 
     /**
      * Init Facebook SDK
-     * @param int $appId
-     * @param string $appSecret
      *
      * @throws \InvalidArgumentException
      */
-    public function initApi($appId, $appSecret)
+    public function initApi()
     {
-        if (!is_int($appId)) {
-            throw new \InvalidArgumentException('Only int appId allowed');
-        } elseif ($appId < 1) {
-            throw new \InvalidArgumentException('App id must be greater then 0');
-        }
-
-        if (!is_string($appSecret)) {
-            $msg = 'Only string allowed for appSecret';
-            throw new \InvalidArgumentException($msg);
-        }
-
-        FacebookSession::setDefaultApplication($appId, $appSecret);
+        FacebookSession::setDefaultApplication($this->getConfig()->getAppId(), $this->getConfig()->getAppSecret());
     }
 
     /**
@@ -157,19 +94,34 @@ class Facebook implements ApiInterface
     }
 
     /**
-     * Parse request for code variable and request access token by it
-     * @return string Access token
+     * Generate access token from code
      *
-     * @throws FacebookModuleException
+*@param string $code
+
+     *
+*@return string
+     * @throws FacebookModuleApiException
      */
-    public function generateAccessTokenFromCode()
+    public function generateAccessTokenFromCode($code)
     {
+        if (!is_string($code)) {
+            $msg = 'Only string allowed for code';
+            $this->getLogger()->error(
+                $msg,
+                [
+                    'object' => $this,
+                ]
+            );
+
+            throw new \InvalidArgumentException($msg);
+        }
+
         // Prepare request params
         $params = [
             'client_id'     => $this->getConfig()->getAppId(),
             'redirect_uri'  => $this->getConfig()->getRedirectUrl(),
             'client_secret' => $this->getConfig()->getAppSecret(),
-            'code'          => $this->getRequest()->get('code'),
+            'code'          => $code,
         ];
 
         // Making request
@@ -191,7 +143,7 @@ class Facebook implements ApiInterface
                     'exception' => $e,
                 ]
             );
-            throw new FacebookModuleException('Failed while making request to facebook API');
+            throw new FacebookModuleApiException('Failed while making request to facebook API');
         }
 
         // Few manipulations for backward compatibility
@@ -213,18 +165,35 @@ class Facebook implements ApiInterface
                     'response' => $response,
                 ]
             );
-            throw new FacebookModuleException('Cant find access token in response');
+            throw new FacebookModuleApiException('Cant find access token in response');
         }
 
         return $accessToken;
     }
 
     /**
-     * TODO: Create normal method, because now it is only for test
+     * @return bool
+     */
+    public function postOnMyWall()
+    {
+
+    }
+
+    /**
+     * @return ProfileInterface[]
+     */
+    public function getFriends()
+    {
+
+    }
+
+    /**
+     * Get profile data for selected member id
+     * @param string|null $memberId
      *
      * @return ProfileInterface
      */
-    public function getMyProfile()
+    public function getProfile($memberId = null)
     {
         $response = (new FacebookRequest(
             $this->getSession(),
@@ -253,28 +222,31 @@ class Facebook implements ApiInterface
     }
 
     /**
-     * @return bool
+     * Convert API gender to single format
+     * @param null|int $gender
+     * @return null|string
      */
-    public function postOnMyWall()
+    public function parseGender($gender = null)
     {
-
+        // TODO: Implement parseGender() method.
     }
 
     /**
-     * @return ProfileInterface[]
+     * Convert API birthday to single format
+     * @param null $birthday
+     * @return \DateTimeImmutable|null
      */
-    public function getFriends()
+    public function parseBirthday($birthday = null)
     {
-
+        // TODO: Implement parseBirthday() method.
     }
 
     /**
-     * @param string|null $memberIds
-     *
-     * @return ProfileInterface
+     * Convert API avatar url to general format
+     * @param null|string $url
+     * @return null
      */
-    public function getProfile($memberIds)
+    public function parseAvatarUrl($url = null)
     {
-
-    }
-}
+        // TODO: Implement parseAvatarUrl() method.
+}}

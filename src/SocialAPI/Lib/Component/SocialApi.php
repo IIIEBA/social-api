@@ -13,6 +13,7 @@ use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class SocialApi
+ *
  * @package SocialAPI\Lib\Component
  */
 class SocialApi implements LoggerAwareInterface
@@ -30,6 +31,7 @@ class SocialApi implements LoggerAwareInterface
     private $apiList = [];
 
     /**
+     * Get api config list
      * @return ApiConfigInterface[]
      */
     public function getApiConfigList()
@@ -147,8 +149,8 @@ class SocialApi implements LoggerAwareInterface
     /**
      * Get selected API instance
      * @param string $name
-     *
      * @return ApiInterface
+     *
      * @throws SocialApiException
      */
     public function getApi($name)
@@ -188,6 +190,7 @@ class SocialApi implements LoggerAwareInterface
     /**
      * Get Facebook API instance
      * @return ApiInterface
+     *
      * @throws SocialApiException
      */
     public function getFacebook()
@@ -209,6 +212,7 @@ class SocialApi implements LoggerAwareInterface
     /**
      * Get VK API instance
      * @return ApiInterface
+     *
      * @throws SocialApiException
      */
     public function getVk()

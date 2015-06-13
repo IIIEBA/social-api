@@ -2,11 +2,7 @@
 
 namespace SocialAPI\Lib\Command;
 
-use GuzzleHttp\Client;
 use SocialAPI\Lib\Component\SocialApi;
-use SocialAPI\Module\Facebook\Component\Facebook;
-use SocialAPI\Module\Facebook\Component\FacebookConfig;
-use SocialAPI\Module\Vk\Component\Vk;
 use SocialAPI\Module\Vk\Component\VkConfig;
 use Symfony\Component\Console\Command\Command;
 use Symfony\Component\Console\Input\InputArgument;
