@@ -3,14 +3,11 @@
 namespace SocialAPI\Module\Vk\Component;
 
 use GuzzleHttp\Client;
-use Psr\Log\LoggerInterface;
 use SocialAPI\Lib\Component\BaseApi;
-use SocialAPI\Lib\Component\ApiConfigInterface;
 use SocialAPI\Lib\Component\ApiInterface;
 use SocialAPI\Lib\Model\ApiResponse\Profile;
 use SocialAPI\Lib\Model\ApiResponse\ProfileInterface;
 use SocialAPI\Module\Vk\Exception\VkModuleApiException;
-use Symfony\Component\HttpFoundation\Request;
 
 class Vk extends BaseApi implements ApiInterface
 {
@@ -35,33 +32,10 @@ class Vk extends BaseApi implements ApiInterface
     const API_URL = 'https://api.vk.com/method/';
 
     /**
-     * @var Client
-     */
-    private $httpClient;
-
-    /**
      * List of fields which need to get
      * @var string
      */
     private $profileFieldsList;
-
-    /**
-     * Set few params into api
-     * @param ApiConfigInterface $config
-     * @param Request $request
-     * @param LoggerInterface $logger
-     */
-    public function __construct(ApiConfigInterface $config, Request $request, LoggerInterface $logger = null)
-    {
-        $this->config  = $config;
-        $this->request = $request;
-
-        if ($logger !== null) {
-            $this->setLogger($logger);
-        }
-
-        $this->initApi();
-    }
 
     /**
      * Get http client

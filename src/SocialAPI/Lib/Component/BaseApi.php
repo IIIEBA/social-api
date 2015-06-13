@@ -2,7 +2,9 @@
 
 namespace SocialAPI\Lib\Component;
 
+use GuzzleHttp\Client;
 use Psr\Log\LoggerAwareInterface;
+use Psr\Log\LoggerInterface;
 use SocialAPI\Lib\Exception\BaseApiException;
 use SocialAPI\Lib\Model\ApiResponse\ProfileInterface;
 use SocialAPI\Lib\Util\Logger\LoggerTrait;
@@ -31,6 +33,11 @@ abstract class BaseApi implements ApiInterface, LoggerAwareInterface
      * @var string
      */
     protected $accessToken;
+
+    /**
+     * @var Client
+     */
+    protected $httpClient;
 
     /**
      * Get config
@@ -77,6 +84,40 @@ abstract class BaseApi implements ApiInterface, LoggerAwareInterface
         }
 
         $this->accessToken = $accessToken;
+    }
+
+    /**
+     * Get http client
+     * @return Client
+     */
+    public function getHttpClient()
+    {
+        if ($this->httpClient === null) {
+            $this->httpClient = new Client([
+                'allow_redirects'   => true,
+                'exceptions'        => false,
+            ]);
+        }
+
+        return $this->httpClient;
+    }
+
+    /**
+     * Init facebook api class
+     * @param ApiConfigInterface $config
+     * @param Request $request
+     * @param LoggerInterface $logger
+     */
+    public function __construct(ApiConfigInterface $config, Request $request, LoggerInterface $logger = null)
+    {
+        $this->config  = $config;
+        $this->request = $request;
+
+        if ($logger !== null) {
+            $this->setLogger($logger);
+        }
+
+        $this->initApi();
     }
 
     /**

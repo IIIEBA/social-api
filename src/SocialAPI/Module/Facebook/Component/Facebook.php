@@ -5,14 +5,11 @@ namespace SocialAPI\Module\Facebook\Component;
 use Facebook\FacebookRedirectLoginHelper;
 use Facebook\FacebookRequest;
 use Facebook\FacebookSession;
-use Psr\Log\LoggerInterface;
 use SocialAPI\Lib\Component\BaseApi;
-use SocialAPI\Lib\Component\ApiConfigInterface;
 use SocialAPI\Lib\Component\ApiInterface;
 use SocialAPI\Lib\Model\ApiResponse\Profile;
 use SocialAPI\Lib\Model\ApiResponse\ProfileInterface;
 use SocialAPI\Module\Facebook\Exception\FacebookModuleApiException;
-use Symfony\Component\HttpFoundation\Request;
 
 class Facebook extends BaseApi implements ApiInterface
 {
@@ -27,24 +24,6 @@ class Facebook extends BaseApi implements ApiInterface
     public function getSession()
     {
         return $this->session;
-    }
-
-    /**
-     * Init facebook api class
-     * @param ApiConfigInterface $config
-     * @param Request $request
-     * @param LoggerInterface $logger
-     */
-    public function __construct(ApiConfigInterface $config, Request $request, LoggerInterface $logger = null)
-    {
-        $this->config  = $config;
-        $this->request = $request;
-
-        if ($logger !== null) {
-            $this->setLogger($logger);
-        }
-
-        $this->initApi();
     }
 
     /**

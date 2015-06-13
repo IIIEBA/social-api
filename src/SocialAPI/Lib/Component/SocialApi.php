@@ -7,6 +7,8 @@ use SocialAPI\Lib\Exception\SocialApiException;
 use SocialAPI\Lib\Util\Logger\LoggerTrait;
 use SocialAPI\Module\Facebook\Component\Facebook;
 use SocialAPI\Module\Facebook\Component\FacebookConfig;
+use SocialAPI\Module\Instagram\Component\Instagram;
+use SocialAPI\Module\Instagram\Component\InstagramConfig;
 use SocialAPI\Module\Vk\Component\VkConfig;
 use SocialAPI\Module\Vk\Component\Vk;
 use Symfony\Component\HttpFoundation\Request;
@@ -90,13 +92,18 @@ class SocialApi implements LoggerAwareInterface
 
             switch (true) {
                 case $config instanceof FacebookConfig:
-                    $api = new Facebook($config, $request);
-                    $this->addApi('facebook', $api, $this->getLogger());
+                    $api = new Facebook($config, $request, $this->getLogger());
+                    $this->addApi('facebook', $api);
                     break;
 
                 case $config instanceof VkConfig:
-                    $api = new Vk($config, $request);
-                    $this->addApi('vk', $api, $this->getLogger());
+                    $api = new Vk($config, $request, $this->getLogger());
+                    $this->addApi('vk', $api);
+                    break;
+
+                case $config instanceof InstagramConfig:
+                    $api = new Instagram($config, $request, $this->getLogger());
+                    $this->addApi('instagram', $api);
                     break;
 
                 default:
@@ -175,6 +182,10 @@ class SocialApi implements LoggerAwareInterface
                 return $this->getVk();
                 break;
 
+            case 'instagram':
+                return $this->getInstagram();
+                break;
+
             default:
                 $msg = 'You trying to get non exist API';
                 $this->getLogger()->error(
@@ -229,5 +240,21 @@ class SocialApi implements LoggerAwareInterface
         }
 
         return $this->apiList['vk'];
+    }
+
+    public function getInstagram()
+    {
+        if (!isset($this->apiList['instagram']) || $this->apiList['instagram'] === null) {
+            $msg = 'Instagram API is disabled by config';
+            $this->getLogger()->error(
+                $msg,
+                [
+                    'object' => $this,
+                ]
+            );
+            throw new SocialApiException($msg);
+        }
+
+        return $this->apiList['instagram'];
     }
 }

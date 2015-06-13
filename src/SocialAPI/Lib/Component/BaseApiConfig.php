@@ -15,7 +15,7 @@ class BaseApiConfig implements ApiConfigInterface
     private $isEnabled = false;
 
     /**
-     * @var int
+     * @var int|string
      */
     private $appId;
 
@@ -94,7 +94,9 @@ class BaseApiConfig implements ApiConfigInterface
         }
 
         if (!is_int($appId)) {
-            throw new \InvalidArgumentException('Only int appId allowed');
+            if (!is_string($appId)) {
+                throw new \InvalidArgumentException('Only int appId allowed');
+            }
         } elseif ($appId < 1) {
             throw new \InvalidArgumentException('App id must be greater then 0');
         }
