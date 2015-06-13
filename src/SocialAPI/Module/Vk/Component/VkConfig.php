@@ -1,6 +1,6 @@
 <?php
 
-namespace SocialAPI\Module\Facebook\Component;
+namespace SocialAPI\Module\Vk\Component;
 
 use SocialAPI\Lib\Component\ApiConfigInterface;
 

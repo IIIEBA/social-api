@@ -2,52 +2,83 @@
 
 namespace SocialAPI\Lib\Command;
 
+use GuzzleHttp\Client;
 use SocialAPI\Lib\Component\SocialApi;
 use SocialAPI\Module\Facebook\Component\Facebook;
 use SocialAPI\Module\Facebook\Component\FacebookConfig;
+use SocialAPI\Module\Vk\Component\Vk;
+use SocialAPI\Module\Vk\Component\VkConfig;
 use Symfony\Component\Console\Command\Command;
+use Symfony\Component\Console\Input\InputArgument;
 use Symfony\Component\Console\Input\InputInterface;
 use Symfony\Component\Console\Output\OutputInterface;
-use Symfony\Component\HttpFoundation\Request;
 
 class TestCommand extends Command
 {
     public function configure()
     {
         $this->setName('test:test')
-            ->setDescription('Facebook API integration tests');
+            ->setDescription('Facebook API integration tests')
+            ->addArgument('api', InputArgument::REQUIRED, 'With which api we will work?')
+            ->addArgument('action', InputArgument::REQUIRED, 'With api action we will test?');
     }
 
     public function execute(InputInterface $input, OutputInterface $output)
     {
         session_start();
+        $_SESSION['state'] = 'test';
 
         $config  = [
-            new FacebookConfig(
+//            new FacebookConfig(
+//                true,
+//                1412497612344354,
+//                '18f0694ffd8d0eb6efbaec59fd9947b0',
+//                'http://apis.home-server.pp.ua/api',
+//                [
+//                    'email',
+//                    'public_profile',
+//                    'user_friends',
+//                ]
+//            ),
+            new VkConfig(
                 true,
-                1412497612344354,
-                '18f0694ffd8d0eb6efbaec59fd9947b0',
+                4291109,
+                'khVCGw6QRG3W2tEBgq0i',
                 'http://apis.home-server.pp.ua/api',
                 [
+                    'friends',
+                    'photos',
+                    'status',
                     'email',
-                    'public_profile',
-                    'user_friends',
+                    'offline',
+                    'nohttps',
+                    'wall',
                 ]
-            ),
+            )
         ];
 
-        //$_GET['code'] = 'AQDpgK6R1J4-6t47XjwHBrkrdqy6y5SqiUPsStR93mFsy0uKPWQ-SOO1RDoEcBC3EJKm-QJp9n1pfaljhntWxXun9dLfADwnfJ5H48EMovwxlLCkDDRf735d7h1bGtsRTQNHMO8otYfBtVGtDBGo1hPh0fC1k3mj7h4RYp6_hrWccj2fvi0YqOg5cVvp6_LiN0vYG8OTtEbBFWsLMb1SDbMYc06yn8xLgbSFN_qTeqyr3e9bMaEtClKVATK6omAFlW1rwGmeOErWtBGNnvhwKVLDBOByE4JJsX0FHWEzTbS-rGsOTf4V7kFF25uEqKRSkYlkgLK8_kM3ZLnFYN_Mpvdl';
-        $accessToken = 'CAAUEqLpuDCIBAET9ZCzWCm7zweRMvdo0EZBPrbmLGFsSUifKp7bEUQq6t3CWkzGGnWfBOkXODVVXg3FpGjkbF65FEPB4JjNY20xPHQ5BqQ3TlsqeMjx8y1w9Q1cGbJt3roxusWuUmewi5z58XC7eEkrzQ3S8LrYPbTDGD1ndUp20iyQCVe8pY3eXgIwHEHjpZCmtePqarZCXl5AQvKwn';
+        $_GET['code'] = '2ee6d25de33bd0173e';
+        $_GET['state'] = 'test';
 
         $socialApi = new SocialApi($config);
 
-        //$output->writeln($socialApi->getFacebook()->generateLoginUrl());
+        if ($input->getArgument('api') == 'vk') {
+            $accessToken = 'cd7b9e91ecae781403f840840c0f28fc67b3511f85f3cab81445966244da672ae1819e2783a8d91ea7cc8';
 
-//        $socialApi->getFacebook()->generateAccessTokenFromCode();
-//        $output->writeln($socialApi->getFacebook()->getAccessToken());
+            if ($input->getArgument('action') == 'auth_url') {
+                $output->writeln($socialApi->getVk()->generateLoginUrl());
+            }
 
-        $socialApi->getFacebook()->setAccessToken($accessToken);
-        $test = $socialApi->getFacebook()->getMyProfile();
-        $output->writeln(print_r($test));
+            if ($input->getArgument('action') == 'get_access_token') {
+                $output->writeln($socialApi->getVk()->parseLoginResponse());
+            }
+
+            if ($input->getArgument('action') == 'api') {
+                $socialApi->getVk()->setAccessToken($accessToken);
+                print_r($socialApi->getVk()->getFriends());
+//                $output->writeln($socialApi->getVk()->getMyProfile());
+            }
+        }
+
     }
 }

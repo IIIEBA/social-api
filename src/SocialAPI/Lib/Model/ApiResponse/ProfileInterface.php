@@ -30,7 +30,7 @@ interface ProfileInterface
     public function getGender();
 
     /**
-     * @return \DateTime|null
+     * @return \DateTimeImmutable|null
      */
     public function getBirthday();
 

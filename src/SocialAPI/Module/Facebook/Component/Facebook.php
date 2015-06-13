@@ -4,13 +4,13 @@ namespace SocialAPI\Module\Facebook\Component;
 
 use Facebook\FacebookRedirectLoginHelper;
 use Facebook\FacebookRequest;
-use Facebook\FacebookRequestException;
 use Facebook\FacebookSession;
+use Psr\Log\LoggerInterface;
 use SocialAPI\Lib\Component\ApiConfigInterface;
 use SocialAPI\Lib\Component\ApiInterface;
 use SocialAPI\Lib\Model\ApiResponse\Profile;
 use SocialAPI\Lib\Model\ApiResponse\ProfileInterface;
-use SocialAPI\Lib\Util\LoggerTrait;
+use SocialAPI\Lib\Util\Logger\LoggerTrait;
 use SocialAPI\Module\Facebook\Exception\FacebookModuleException;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -83,19 +83,18 @@ class Facebook implements ApiInterface
      * Init facebook api class
      * @param ApiConfigInterface $config
      * @param Request $request
-     * @param null|string $accessToken
+     * @param LoggerInterface $logger
      */
-    public function __construct(ApiConfigInterface $config, Request $request, $accessToken = null)
+    public function __construct(ApiConfigInterface $config, Request $request, LoggerInterface $logger = null)
     {
         $this->config  = $config;
         $this->request = $request;
 
-        $this->initApi($this->getConfig()->getAppId(), $this->getConfig()->getAppSecret());
-
-        if ($accessToken !== null) {
-            $this->setAccessToken($accessToken);
-            $this->initSession($this->getAccessToken());
+        if ($logger !== null) {
+            $this->setLogger($logger);
         }
+
+        $this->initApi($this->getConfig()->getAppId(), $this->getConfig()->getAppSecret());
     }
 
     /**
@@ -111,6 +110,11 @@ class Facebook implements ApiInterface
             throw new \InvalidArgumentException('Only int appId allowed');
         } elseif ($appId < 1) {
             throw new \InvalidArgumentException('App id must be greater then 0');
+        }
+
+        if (!is_string($appSecret)) {
+            $msg = 'Only string allowed for appSecret';
+            throw new \InvalidArgumentException($msg);
         }
 
         FacebookSession::setDefaultApplication($appId, $appSecret);
@@ -259,17 +263,17 @@ class Facebook implements ApiInterface
     /**
      * @return ProfileInterface[]
      */
-    public function getMyFriends()
+    public function getFriends()
     {
 
     }
 
     /**
-     * @param string|int $memberId
+     * @param string|null $memberIds
      *
      * @return ProfileInterface
      */
-    public function getMyFriend($memberId)
+    public function getProfile($memberIds)
     {
 
     }

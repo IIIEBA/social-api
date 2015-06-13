@@ -4,10 +4,10 @@ namespace SocialAPI\Lib\Component;
 
 use Psr\Log\LoggerAwareInterface;
 use SocialAPI\Lib\Exception\SocialApiException;
-use SocialAPI\Lib\Util\LoggerTrait;
+use SocialAPI\Lib\Util\Logger\LoggerTrait;
 use SocialAPI\Module\Facebook\Component\Facebook;
 use SocialAPI\Module\Facebook\Component\FacebookConfig;
-use SocialAPI\Module\Facebook\Component\VkConfig;
+use SocialAPI\Module\Vk\Component\VkConfig;
 use SocialAPI\Module\Vk\Component\Vk;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -89,12 +89,12 @@ class SocialApi implements LoggerAwareInterface
             switch (true) {
                 case $config instanceof FacebookConfig:
                     $api = new Facebook($config, $request);
-                    $this->addApi('facebook', $api);
+                    $this->addApi('facebook', $api, $this->getLogger());
                     break;
 
                 case $config instanceof VkConfig:
                     $api = new Vk($config, $request);
-                    $this->addApi('vk', $api);
+                    $this->addApi('vk', $api, $this->getLogger());
                     break;
 
                 default:

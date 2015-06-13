@@ -2,6 +2,7 @@
 
 namespace SocialAPI\Lib\Component;
 
+use Psr\Log\LoggerInterface;
 use SocialAPI\Lib\Model\ApiResponse\ProfileInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -10,9 +11,9 @@ interface ApiInterface
     /**
      * @param ApiConfigInterface $config
      * @param Request $request
-     * @param null|string $accessToken
+     * @param LoggerInterface $logger
      */
-    public function __construct(ApiConfigInterface $config, Request $request, $accessToken = null);
+    public function __construct(ApiConfigInterface $config, Request $request, LoggerInterface $logger = null);
 
     /**
      * @return ApiConfigInterface
@@ -35,10 +36,9 @@ interface ApiInterface
     public function setAccessToken($accessToken);
 
     /**
-     * @param string|int $appId
-     * @param string $appSecret
+     * Init api method
      */
-    public function initApi($appId, $appSecret);
+    public function initApi();
 
     /**
      * @return string
@@ -50,15 +50,15 @@ interface ApiInterface
      */
     public function generateLogoutUrl();
 
-    /**
-     * Parse request for code variable and request access token by it
-     */
-    public function generateAccessTokenFromCode();
+    public function parseLoginResponse();
 
     /**
-     * @return ProfileInterface
+     * Parse request for code variable and request access token by it
+     * @param string $code
+     *
+     * @return string
      */
-    public function getMyProfile();
+    public function generateAccessTokenFromCode($code);
 
     /**
      * @return bool
@@ -66,14 +66,19 @@ interface ApiInterface
     public function postOnMyWall();
 
     /**
-     * @return ProfileInterface[]
+     * @return ProfileInterface
      */
-    public function getMyFriends();
+    public function getMyProfile();
 
     /**
-     * @param string|int $memberId
+     * @return ProfileInterface[]
+     */
+    public function getFriends();
+
+    /**
+     * @param string|null $memberIds
      *
      * @return ProfileInterface
      */
-    public function getMyFriend($memberId);
+    public function getProfile($memberIds);
 }
