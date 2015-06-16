@@ -126,6 +126,36 @@ class Profile implements ProfileInterface
         $birthday   = null,
         $avatarUrl  = null
     ) {
+        if (is_int($id) && $id < 1) {
+            throw new \InvalidArgumentException('If id is int, it must be greater then 0');
+        } elseif (!is_string($id)) {
+            throw new \InvalidArgumentException('Only int or string allowed for id');
+        }
+
+        if (!is_string($firstName)) {
+            throw new \InvalidArgumentException('Only string allowed for firstName');
+        }
+
+        if ($lastName !== null && !is_string($lastName)) {
+            throw new \InvalidArgumentException('Only string or null allowed for lastName');
+        }
+
+        if ($email !== null && !is_string($email)) {
+            throw new \InvalidArgumentException('Only string or null allowed for email');
+        }
+
+        if ($gender !== null && (!is_string($gender) || !in_array($gender, ['male', 'female']))) {
+            throw new \InvalidArgumentException('Only string or null allowed for gender');
+        }
+
+        if ($birthday !== null && !($birthday instanceof \DateTimeImmutable)) {
+            throw new \InvalidArgumentException('Only string or DateTimeImmutable allowed for birthday');
+        }
+
+        if ($avatarUrl !== null && !is_string($avatarUrl)) {
+            throw new \InvalidArgumentException('Only string or null allowed for avatarUrl');
+        }
+
         $this->id           = $id;
         $this->firstName    = $firstName;
         $this->lastName     = $lastName;

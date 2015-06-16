@@ -236,7 +236,7 @@ class Instagram extends BaseApi implements ApiInterface
     /**
      * Post message on member wall
      * @return bool
-     * 
+     *
      * @throws InstagramModuleException
      */
     public function postOnMyWall()
