@@ -42,68 +42,70 @@ class SocialApi implements LoggerAwareInterface
     }
 
     /**
-     * @param ApiConfigInterface[] $apiConfigList
+     * @param array $apiConfigList
+     * @param Request $request
      *
      * @throws SocialApiException
      */
-    public function __construct(array $apiConfigList)
+    public function __construct(Request $request, array $apiConfigList = [])
     {
-        if (empty($apiConfigList)) {
-            $msg = 'You must set config list when init socialApi';
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object' => $this,
-                ]
-            );
-            throw new SocialApiException($msg);
-        }
-
         $this->apiConfigList = $apiConfigList;
 
-        $this->initApis();
+        $this->initApis($request);
     }
 
     /**
      * Init social API`s from config if enabled
+     * @param $request
      *
      * @throws SocialApiException
      */
-    private function initApis()
+    private function initApis($request)
     {
-        $request = Request::createFromGlobals();
-
-        foreach ($this->getApiConfigList() as $config) {
-            /**
-             * @var ApiConfigInterface $config
-             */
-            if (!$config instanceof ApiConfigInterface) {
-                $msg = 'Config must implements ApiInterface';
-                $this->getLogger()->error(
-                    $msg,
-                    [
-                        'object' => $this,
-                    ]
-                );
-                throw new SocialApiException($msg);
-            } elseif ($config->isEnabled() !== true) {
+        foreach ($this->getApiConfigList() as $apiName => $config) {
+            if (isset($config['isEnabled']) && $config['isEnabled'] === false) {
                 continue;
             }
 
-            switch (true) {
-                case $config instanceof FacebookConfig:
+            switch ($apiName) {
+                case 'facebook':
+                    $config = new FacebookConfig(
+                        isset($config['isEnabled'])     ? $config['isEnabled']      : null,
+                        isset($config['appId'])         ? $config['appId']          : null,
+                        isset($config['appSecret'])     ? $config['appSecret']      : null,
+                        isset($config['redirectUrl'])   ? $config['redirectUrl']    : null,
+                        isset($config['scopeList'])     ? $config['scopeList']      : null
+                    );
+
                     $api = new Facebook($config, $request, $this->getLogger());
-                    $this->addApi('facebook', $api);
-                    break;
 
-                case $config instanceof VkConfig:
+                    $this->addApi($apiName, $api);
+                    break;
+                case 'vk':
+                    $config = new VkConfig(
+                        isset($config['isEnabled'])     ? $config['isEnabled']      : null,
+                        isset($config['appId'])         ? $config['appId']          : null,
+                        isset($config['appSecret'])     ? $config['appSecret']      : null,
+                        isset($config['redirectUrl'])   ? $config['redirectUrl']    : null,
+                        isset($config['scopeList'])     ? $config['scopeList']      : null
+                    );
+
                     $api = new Vk($config, $request, $this->getLogger());
-                    $this->addApi('vk', $api);
-                    break;
 
-                case $config instanceof InstagramConfig:
+                    $this->addApi($apiName, $api);
+                    break;
+                case 'instagram':
+                    $config = new InstagramConfig(
+                        isset($config['isEnabled'])     ? $config['isEnabled']      : null,
+                        isset($config['appId'])         ? $config['appId']          : null,
+                        isset($config['appSecret'])     ? $config['appSecret']      : null,
+                        isset($config['redirectUrl'])   ? $config['redirectUrl']    : null,
+                        isset($config['scopeList'])     ? $config['scopeList']      : null
+                    );
+
                     $api = new Instagram($config, $request, $this->getLogger());
-                    $this->addApi('instagram', $api);
+
+                    $this->addApi($apiName, $api);
                     break;
 
                 default:
@@ -116,17 +118,6 @@ class SocialApi implements LoggerAwareInterface
                     );
                     throw new SocialApiException($msg);
             }
-        }
-
-        if (count($this->apiList) === 0) {
-            $msg = 'You must configure at least one api';
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object' => $this,
-                ]
-            );
-            throw new SocialApiException($msg);
         }
     }
 

@@ -148,11 +148,13 @@ abstract class BaseApi implements ApiInterface, LoggerAwareInterface
 
             $accessToken = $this->generateAccessTokenFromCode($this->getRequest()->get('code'));
         } elseif ($this->getRequest()->get('error') !== null) {
-            $msg = 'Failed to parse response from Facebook API';
+            $msg = 'Failed to parse response from API with error:' . $this->getRequest()->get('error_description');
             $this->getLogger()->error(
                 $msg,
                 [
-                    'object' => $this,
+                    'object'        => $this,
+                    'error'         => $this->getRequest()->get('error'),
+                    'error_desc'    => $this->getRequest()->get('error_description'),
                 ]
             );
 
@@ -160,7 +162,7 @@ abstract class BaseApi implements ApiInterface, LoggerAwareInterface
         }
 
         if ($accessToken === null) {
-            $msg = 'Strange response was given from Facebook API';
+            $msg = 'Strange response was given from API';
             $this->getLogger()->error(
                 $msg,
                 [

@@ -53,7 +53,7 @@ interface ProfileInterface
      * @param null|string $lastName
      * @param null|string $email
      * @param null|string $gender
-     * @param null|\DateTime $birthday
+     * @param null|\DateTimeImmutable $birthday
      * @param null|string $avatarUrl
      */
     public function __construct(

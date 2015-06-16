@@ -193,11 +193,9 @@ class Vk extends BaseApi implements ApiInterface
 
     /**
      * Prepare data for calling selected API action and call it
-     *
-*@param string $method
+     * @param string $method
      * @param array $params
-     *
-*@return object
+     * @return object
 
      * @throws VkModuleApiException
      */
@@ -280,7 +278,7 @@ class Vk extends BaseApi implements ApiInterface
     /**
      * Post msg on my wall
      *
-*@throws VkModuleApiException
+     * @throws VkModuleApiException
      */
     public function postOnMyWall()
     {
