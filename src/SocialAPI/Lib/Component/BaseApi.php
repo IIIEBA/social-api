@@ -200,10 +200,10 @@ abstract class BaseApi implements ApiInterface, LoggerAwareInterface
         if (!ini_get('open_basedir')
             && is_readable('/dev/urandom')) {
             $fp = fopen('/dev/urandom', 'rb');
-            if ($fp !== FALSE) {
+            if ($fp !== false) {
                 $buf = fread($fp, $bytes);
                 fclose($fp);
-                if($buf !== FALSE) {
+                if ($buf !== false) {
                     return bin2hex($buf);
                 }
             }
@@ -211,7 +211,7 @@ abstract class BaseApi implements ApiInterface, LoggerAwareInterface
 
         if (function_exists('mcrypt_create_iv')) {
             $buf = mcrypt_create_iv($bytes, MCRYPT_DEV_URANDOM);
-            if ($buf !== FALSE) {
+            if ($buf !== false) {
                 return bin2hex($buf);
             }
         }
