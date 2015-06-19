@@ -1,8 +1,4 @@
+# social-api
+[![Packagist](https://img.shields.io/packagist/v/symfony/symfony.svg?style=flat-square)](https://github.com/IIIEBA/social-api)
 
-
-
-
-# socialAPI
 Social networks API lib
-
-Add packagist package
