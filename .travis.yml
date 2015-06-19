@@ -18,4 +18,5 @@ matrix:
     - php: 7.0
     
 script:
+  - composer self-update
   - bin/dev-phpunit
