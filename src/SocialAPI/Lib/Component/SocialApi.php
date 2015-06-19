@@ -258,6 +258,3 @@ class SocialApi implements LoggerAwareInterface
         return $this->apiList['instagram'];
     }
 }
-
-$test = new SocialApi([]);
-$test->getVk()->generateLoginUrl();
