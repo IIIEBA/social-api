@@ -9,7 +9,7 @@ use SocialAPI\Lib\Component\BaseApi;
 use SocialAPI\Lib\Component\ApiInterface;
 use SocialAPI\Lib\Model\ApiResponse\Profile;
 use SocialAPI\Lib\Model\ApiResponse\ProfileInterface;
-use SocialAPI\Module\Facebook\Exception\FacebookModuleApiException;
+use SocialAPI\Module\Facebook\Exception\FacebookModuleException;
 
 class Facebook extends BaseApi implements ApiInterface
 {
@@ -25,6 +25,18 @@ class Facebook extends BaseApi implements ApiInterface
     {
         return $this->session;
     }
+
+    /**
+     * Set access token
+     * @param string $accessToken
+     */
+    public function setAccessToken($accessToken)
+    {
+        parent::setAccessToken($accessToken);
+
+        $this->initSession();
+    }
+
 
     /**
      * Init Facebook SDK
@@ -54,6 +66,7 @@ class Facebook extends BaseApi implements ApiInterface
     public function generateLoginUrl()
     {
         $helper   = new FacebookRedirectLoginHelper($this->getConfig()->getRedirectUrl());
+        $helper->disableSessionStatusCheck();
         $loginUrl = $helper->getLoginUrl($this->getConfig()->getScopeList());
 
         return $loginUrl;
@@ -74,12 +87,10 @@ class Facebook extends BaseApi implements ApiInterface
 
     /**
      * Generate access token from code
+     * @param string $code
+     * @return string
      *
-*@param string $code
-
-     *
-*@return string
-     * @throws FacebookModuleApiException
+     * @throws FacebookModuleException
      */
     public function generateAccessTokenFromCode($code)
     {
@@ -122,7 +133,7 @@ class Facebook extends BaseApi implements ApiInterface
                     'exception' => $e,
                 ]
             );
-            throw new FacebookModuleApiException('Failed while making request to facebook API');
+            throw new FacebookModuleException('Failed while making request to facebook API');
         }
 
         // Few manipulations for backward compatibility
@@ -144,7 +155,7 @@ class Facebook extends BaseApi implements ApiInterface
                     'response' => $response,
                 ]
             );
-            throw new FacebookModuleApiException('Cant find access token in response');
+            throw new FacebookModuleException('Cant find access token in response');
         }
 
         return $accessToken;

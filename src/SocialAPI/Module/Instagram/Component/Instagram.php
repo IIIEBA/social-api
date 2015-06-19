@@ -16,7 +16,7 @@ class Instagram extends BaseApi implements ApiInterface
     const OAUTH_CODE_URL = 'https://api.instagram.com/oauth/authorize/';
 
     /**
-     * Url to API for access tolken request
+     * Url to API for access token request
      */
     const ACCESS_TOKEN_URL = 'https://api.instagram.com/oauth/access_token';
 
@@ -30,7 +30,7 @@ class Instagram extends BaseApi implements ApiInterface
      */
     public function initApi()
     {
-        // Do nothing
+        // Do nothing for this API
     }
 
     /**
@@ -269,7 +269,7 @@ class Instagram extends BaseApi implements ApiInterface
         $firstName  = $profile->username;
         $lastName   = null;
         if (!empty($profile->full_name)) {
-            $nameParts = explode(' ',trim($profile->full_name));
+            $nameParts = explode(' ', trim($profile->full_name));
             $firstName = array_shift($nameParts);
 
             if (!empty($nameParts)) {

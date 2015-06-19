@@ -9,4 +9,4 @@ cd ..
 # Descending to tests folder
 cd tests
 
-../vendor/bin/phpunit $@
+./../vendor/bin/phpunit $@

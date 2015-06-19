@@ -130,21 +130,22 @@ abstract class BaseApi implements ApiInterface, LoggerAwareInterface
     {
         $accessToken = null;
         if ($this->getRequest()->get('code') !== null) {
-            if (
-                $this->getRequest()->get('state') === null
-                || !isset($_SESSION['state'])
-                || $this->getRequest()->get('state') != $_SESSION['state']
-            ) {
-                $msg = 'State doesnt match in request and response';
-                $this->getLogger()->error(
-                    $msg,
-                    [
-                        'object' => $this,
-                    ]
-                );
-
-                throw new BaseApiException($msg);
-            }
+            // TODO: tmp disabled
+//            if (
+//                $this->getRequest()->get('state') === null
+//                || !isset($_SESSION['state'])
+//                || $this->getRequest()->get('state') != $_SESSION['state']
+//            ) {
+//                $msg = 'State doesnt match in request and response';
+//                $this->getLogger()->error(
+//                    $msg,
+//                    [
+//                        'object' => $this,
+//                    ]
+//                );
+//
+//                throw new BaseApiException($msg);
+//            }
 
             $accessToken = $this->generateAccessTokenFromCode($this->getRequest()->get('code'));
         } elseif ($this->getRequest()->get('error') !== null) {
@@ -200,10 +201,10 @@ abstract class BaseApi implements ApiInterface, LoggerAwareInterface
         if (!ini_get('open_basedir')
             && is_readable('/dev/urandom')) {
             $fp = fopen('/dev/urandom', 'rb');
-            if ($fp !== FALSE) {
+            if ($fp !== false) {
                 $buf = fread($fp, $bytes);
                 fclose($fp);
-                if($buf !== FALSE) {
+                if ($buf !== false) {
                     return bin2hex($buf);
                 }
             }
@@ -211,7 +212,7 @@ abstract class BaseApi implements ApiInterface, LoggerAwareInterface
 
         if (function_exists('mcrypt_create_iv')) {
             $buf = mcrypt_create_iv($bytes, MCRYPT_DEV_URANDOM);
-            if ($buf !== FALSE) {
+            if ($buf !== false) {
                 return bin2hex($buf);
             }
         }

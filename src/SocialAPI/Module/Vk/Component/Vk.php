@@ -68,7 +68,7 @@ class Vk extends BaseApi implements ApiInterface
     public function initApi()
     {
         $this->profileFieldsList = implode(
-            ',' ,
+            ',',
             [
                 'sex',
                 'bdate',
@@ -118,7 +118,6 @@ class Vk extends BaseApi implements ApiInterface
 *@param string $code
      *
 *@return string
-
      * @throws VkModuleApiException
      */
     public function generateAccessTokenFromCode($code)
@@ -196,7 +195,6 @@ class Vk extends BaseApi implements ApiInterface
      * @param string $method
      * @param array $params
      * @return object
-
      * @throws VkModuleApiException
      */
     public function callApiMethod($method, array $params = [])
