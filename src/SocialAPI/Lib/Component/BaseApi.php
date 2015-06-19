@@ -130,21 +130,22 @@ abstract class BaseApi implements ApiInterface, LoggerAwareInterface
     {
         $accessToken = null;
         if ($this->getRequest()->get('code') !== null) {
-            if (
-                $this->getRequest()->get('state') === null
-                || !isset($_SESSION['state'])
-                || $this->getRequest()->get('state') != $_SESSION['state']
-            ) {
-                $msg = 'State doesnt match in request and response';
-                $this->getLogger()->error(
-                    $msg,
-                    [
-                        'object' => $this,
-                    ]
-                );
-
-                throw new BaseApiException($msg);
-            }
+            // TODO: tmp disabled
+//            if (
+//                $this->getRequest()->get('state') === null
+//                || !isset($_SESSION['state'])
+//                || $this->getRequest()->get('state') != $_SESSION['state']
+//            ) {
+//                $msg = 'State doesnt match in request and response';
+//                $this->getLogger()->error(
+//                    $msg,
+//                    [
+//                        'object' => $this,
+//                    ]
+//                );
+//
+//                throw new BaseApiException($msg);
+//            }
 
             $accessToken = $this->generateAccessTokenFromCode($this->getRequest()->get('code'));
         } elseif ($this->getRequest()->get('error') !== null) {
