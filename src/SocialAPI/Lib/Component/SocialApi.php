@@ -145,6 +145,15 @@ class SocialApi implements LoggerAwareInterface
     }
 
     /**
+     * Return list of enabled APIs
+     * @return string[]
+     */
+    public function getEnabledApiList()
+    {
+        return array_keys($this->apiList);
+    }
+
+    /**
      * Get selected API instance
      * @param string $name
      * @return ApiInterface
@@ -249,3 +258,6 @@ class SocialApi implements LoggerAwareInterface
         return $this->apiList['instagram'];
     }
 }
+
+$test = new SocialApi([]);
+$test->getVk()->generateLoginUrl();
