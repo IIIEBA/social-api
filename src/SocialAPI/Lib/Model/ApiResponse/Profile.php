@@ -126,8 +126,10 @@ class Profile implements ProfileInterface
         $birthday   = null,
         $avatarUrl  = null
     ) {
-        if (is_int($id) && $id < 1) {
-            throw new \InvalidArgumentException('If id is int, it must be greater then 0');
+        if (is_int($id)) {
+            if ($id < 1) {
+                throw new \InvalidArgumentException('If id is int, it must be greater then 0');
+            }
         } elseif (!is_string($id)) {
             throw new \InvalidArgumentException('Only int or string allowed for id');
         }
