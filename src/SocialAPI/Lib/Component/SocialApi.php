@@ -44,7 +44,6 @@ class SocialApi implements LoggerAwareInterface
     /**
      * @param array $apiConfigList
      * @param Request $request
-     *
      * @throws SocialApiException
      */
     public function __construct(Request $request, array $apiConfigList = [])
@@ -57,10 +56,9 @@ class SocialApi implements LoggerAwareInterface
     /**
      * Init social API`s from config if enabled
      * @param $request
-     *
      * @throws SocialApiException
      */
-    private function initApis($request)
+    public function initApis($request)
     {
         foreach ($this->getApiConfigList() as $apiName => $config) {
             if (isset($config['isEnabled']) && $config['isEnabled'] === false) {
@@ -125,7 +123,6 @@ class SocialApi implements LoggerAwareInterface
      * Add initialized api to allowed list
      * @param string $name
      * @param ApiInterface $api
-     *
      * @throws SocialApiException
      */
     public function addApi($name, ApiInterface $api)
@@ -157,7 +154,6 @@ class SocialApi implements LoggerAwareInterface
      * Get selected API instance
      * @param string $name
      * @return ApiInterface
-     *
      * @throws SocialApiException
      */
     public function getApi($name)
@@ -170,91 +166,50 @@ class SocialApi implements LoggerAwareInterface
                     'object' => $this,
                 ]
             );
+            throw new \InvalidArgumentException($msg);
+        }
+
+        if (!isset($this->apiList[$name])) {
+            $msg = ucfirst($name) . ' API is not allowed or not configurated';
+            $this->getLogger()->error(
+                $msg,
+                [
+                    'object' => $this,
+                ]
+            );
             throw new SocialApiException($msg);
         }
 
-        switch ($name) {
-            case 'facebook':
-                return $this->getFacebook();
-                break;
-
-            case 'vk':
-                return $this->getVk();
-                break;
-
-            case 'instagram':
-                return $this->getInstagram();
-                break;
-
-            default:
-                $msg = 'You trying to get non exist API';
-                $this->getLogger()->error(
-                    $msg,
-                    [
-                        'object' => $this,
-                    ]
-                );
-                throw new SocialApiException($msg);
-        }
+        return $this->apiList[$name];
     }
 
     /**
      * Get Facebook API instance
      * @return ApiInterface
-     *
      * @throws SocialApiException
      */
     public function getFacebook()
     {
-        if (!isset($this->apiList['facebook']) || $this->apiList['facebook'] === null) {
-            $msg = 'Facebook API is disabled by config';
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object' => $this,
-                ]
-            );
-            throw new SocialApiException($msg);
-        }
-
-        return $this->apiList['facebook'];
+        return $this->getApi('facebook');
     }
 
     /**
      * Get VK API instance
      * @return ApiInterface
-     *
      * @throws SocialApiException
      */
     public function getVk()
     {
-        if (!isset($this->apiList['vk']) || $this->apiList['vk'] === null) {
-            $msg = 'VK API is disabled by config';
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object' => $this,
-                ]
-            );
-            throw new SocialApiException($msg);
-        }
-
-        return $this->apiList['vk'];
+        return $this->getApi('vk');
     }
 
+    /**
+     * Get Instagram API interface
+     * @return ApiInterface
+     * @throws SocialApiException
+     */
     public function getInstagram()
     {
-        if (!isset($this->apiList['instagram']) || $this->apiList['instagram'] === null) {
-            $msg = 'Instagram API is disabled by config';
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object' => $this,
-                ]
-            );
-            throw new SocialApiException($msg);
-        }
-
-        return $this->apiList['instagram'];
+        return $this->getApi('instagram');
     }
 }
