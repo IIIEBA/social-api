@@ -173,7 +173,7 @@ class SocialApi implements LoggerAwareInterface
             throw new SocialApiException($msg);
         }
 
-        switch (true) {
+        switch ($name) {
             case 'facebook':
                 return $this->getFacebook();
                 break;
