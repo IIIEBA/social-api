@@ -30,7 +30,7 @@ class Instagram extends BaseApi implements ApiInterface
      */
     public function initApi()
     {
-        // TODO: Implement initApi() method.
+        // Do nothing
     }
 
     /**
@@ -56,7 +56,7 @@ class Instagram extends BaseApi implements ApiInterface
      */
     public function generateLogoutUrl()
     {
-        // TODO: Implement generateLogoutUrl() method.
+        return '/';
     }
 
     /**
