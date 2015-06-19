@@ -9,5 +9,5 @@ build:
       -
         command: bin/dev-phpunit
         coverage:
-        file: src/
-        format: php-clover
+          file: src/
+          format: php-clover
