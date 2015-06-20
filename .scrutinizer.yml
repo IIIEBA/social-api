@@ -8,6 +8,3 @@ build:
     override:
       -
         command: bin/dev-phpunit
-
-tools:
-    external_code_coverage: true
