@@ -82,7 +82,7 @@ class BaseApiConfig implements ApiConfigInterface
     /**
      * Init config
      * @param bool $isEnabled
-     * @param int $appId
+     * @param int|string $appId
      * @param string $appSecret
      * @param string $redirectUrl
      * @param array $scopeList

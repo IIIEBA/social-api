@@ -9,6 +9,11 @@ use SocialAPI\Lib\Component\SocialApi;
 use SocialAPI\Lib\Exception\SocialApiException;
 use Symfony\Component\HttpFoundation\Request;
 
+/**
+ * Class SocialApiTest
+ *
+ * @package Tests\SocialApi\Lib\Component
+ */
 class SocialApiTest extends PHPUnit_Framework_TestCase
 {
     /**

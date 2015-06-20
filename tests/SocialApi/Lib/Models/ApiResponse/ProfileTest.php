@@ -15,9 +15,9 @@ class ProfileTest extends \PHPUnit_Framework_TestCase
     use ConstructorTester;
 
     /**
-     * Test for __construct method
+     * Test for __construct method and getters
      */
-    public function testConstructor()
+    public function testConstructorAndGetters()
     {
         $success = [
             'id'        => [324, 'test'],

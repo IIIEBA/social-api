@@ -3,7 +3,7 @@
 namespace SocialAPI\Lib\Util\Tests;
 
 /**
- * Class ConstructorTester
+ * Trait ConstructorTester for unit tests
  *
  * @package SocialAPI\Lib\Util\Tests
  */
@@ -34,14 +34,14 @@ trait ConstructorTester
                 if ($num !== 0) {
                     $validPrepared = [];
                     foreach ($valid as $name => $values) {
-                        $validPrepared[$name] = isset($values[$num]) ? $values[$num] : reset($values);
+                        $validPrepared[$name] = array_key_exists($num, $values) ? $values[$num] : reset($values);
                     }
                 }
 
                 call_user_func_array($userFunc, $validPrepared);
                 $this->assertTrue(true);
             } catch (\InvalidArgumentException $e) {
-                $this->fail("Test error with correct data: " . $e->getMessage());
+                $this->fail("Test fall down with correct value with error: " . $e->getMessage());
             }
         }
 
