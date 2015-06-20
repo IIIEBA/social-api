@@ -17,4 +17,4 @@ matrix:
 script:
   - composer self-update
   - composer install
-  - bin/dev-phpunit
+  - ./bin/dev-phpunit
