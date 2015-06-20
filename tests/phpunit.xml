@@ -7,7 +7,7 @@
         topOnFailure="false">
     <testsuites>
         <testsuite name="social-api">
-            <directory suffix="Test.php">./socialApi/*</directory>
+            <directory suffix="Test.php">./SocialApi/*</directory>
         </testsuite>
     </testsuites>
 </phpunit>
