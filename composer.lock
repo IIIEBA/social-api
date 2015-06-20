@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e0f140447f38e5ffebbbf6b81367e732",
+    "hash": "ecfbefc7255c258c760949039fe8ec09",
     "packages": [
         {
             "name": "facebook/php-sdk-v4",
@@ -425,6 +425,40 @@
         }
     ],
     "packages-dev": [
+        {
+            "name": "ashevchuk/phpunit-plus",
+            "version": "dev-master",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/IIIEBA/phpunit-plus.git",
+                "reference": "4e260575e2cb6dc19ea54e7ac53032884cc52e5c"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/IIIEBA/phpunit-plus/zipball/4e260575e2cb6dc19ea54e7ac53032884cc52e5c",
+                "reference": "4e260575e2cb6dc19ea54e7ac53032884cc52e5c",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.7",
+                "phpunit/phpunit-mock-objects": "~2.3"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "PhpUnitPlus\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Andrew shevchuk",
+                    "email": "shevchuk@be-aware.com.ua"
+                }
+            ],
+            "description": "Makes your unit-tests more compact and simpler",
+            "time": "2015-06-20 14:46:12"
+        },
         {
             "name": "doctrine/instantiator",
             "version": "1.0.5",
@@ -1381,7 +1415,9 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": [],
+    "stability-flags": {
+        "ashevchuk/phpunit-plus": 20
+    },
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {
