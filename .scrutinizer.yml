@@ -8,6 +8,6 @@ build:
     override:
       -
         command: bin/dev-phpunit
-        coverage:
-          file: src/
-          format: php-clover
+
+tools:
+    external_code_coverage: true
