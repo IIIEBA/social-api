@@ -184,7 +184,7 @@ abstract class BaseApi implements ApiInterface, LoggerAwareInterface
      *
      * @throws BaseApiException
      */
-    public function random($bytes)
+    public function generateRandom($bytes)
     {
         if (!is_numeric($bytes)) {
             throw new BaseApiException(

@@ -1,13 +1,13 @@
-<phpunit bootstrap="bootstrap.php"
-		colors="true"
-		convertErrorsToExceptions="true"
-		convertNoticesToExceptions="true"
-		convertWarningsToExceptions="true"
-		stopOnFailure="false">
-
+<phpunit
+        bootstrap="./bootstrap.php"
+        colors="true"
+        convertErrorsToExceptions="true"
+        convertNoticesToExceptions="true"
+        convertWarningsToExceptions="true"
+        topOnFailure="false">
     <testsuites>
-        <testsuite name="SocailAPI">
-            <directory>SocialAPI</directory>
+        <testsuite name="social-api">
+            <directory suffix="Test.php">./socialApi/*</directory>
         </testsuite>
     </testsuites>
 </phpunit>

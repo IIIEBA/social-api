@@ -38,7 +38,7 @@ class BaseApiConfigTest extends \PHPUnit_Framework_TestCase
         $this->checkConstructor(
             $valid,
             $invalid,
-            function($isEnabled, $appId, $appSecret, $redirectUrl, $scopeList) {
+            function ($isEnabled, $appId, $appSecret, $redirectUrl, $scopeList) {
                 $config = new BaseApiConfigTestClass(
                     $isEnabled,
                     $appId,

@@ -150,5 +150,4 @@ class BaseApiTestClass extends BaseApi
     {
         throw new \Exception('Method not implemented');
     }
-
 }

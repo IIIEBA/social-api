@@ -42,7 +42,7 @@ class ProfileTest extends \PHPUnit_Framework_TestCase
         $this->checkConstructor(
             $success,
             $fail,
-            function($id, $firstName, $lastName, $email, $gender, $birthday, $avatarUrl) {
+            function ($id, $firstName, $lastName, $email, $gender, $birthday, $avatarUrl) {
                 $profile = new Profile($id, $firstName, $lastName, $email, $gender, $birthday, $avatarUrl);
 
                 $this->assertEquals($id, $profile->getId());
