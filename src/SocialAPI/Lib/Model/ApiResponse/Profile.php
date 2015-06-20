@@ -91,7 +91,7 @@ class Profile implements ProfileInterface
 
     /**
      * Get birthday
-     * @return \DateTime|null
+     * @return \DateTimeImmutable|null
      */
     public function getBirthday()
     {
@@ -120,11 +120,11 @@ class Profile implements ProfileInterface
     public function __construct(
         $id,
         $firstName,
-        $lastName   = null,
-        $email      = null,
-        $gender     = null,
-        $birthday   = null,
-        $avatarUrl  = null
+        $lastName = null,
+        $email = null,
+        $gender = null,
+        $birthday = null,
+        $avatarUrl = null
     ) {
         if (is_int($id)) {
             if ($id < 1) {
