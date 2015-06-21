@@ -2,6 +2,9 @@
 
 namespace SocialAPI\Lib\Model\ApiResponse;
 
+use SocialAPI\Lib\Exception\InvalidArgument\EmptyStringException;
+use SocialAPI\Lib\Exception\InvalidArgument\NotStringException;
+
 /**
  * Class Profile
  *
@@ -130,32 +133,54 @@ class Profile implements ProfileInterface
             if ($id < 1) {
                 throw new \InvalidArgumentException('If id is int, it must be greater then 0');
             }
-        } elseif (!is_string($id)) {
-            throw new \InvalidArgumentException('Only int or string allowed for id');
+        } elseif (is_string($id)) {
+            if ($id === '') {
+                throw new EmptyStringException('id');
+            }
+        } else {
+            throw new NotStringException('id');
         }
 
         if (!is_string($firstName)) {
-            throw new \InvalidArgumentException('Only string allowed for firstName');
+            throw new NotStringException('firstName');
+        } elseif ($firstName === '') {
+            throw new EmptyStringException('firstName');
         }
 
-        if ($lastName !== null && !is_string($lastName)) {
-            throw new \InvalidArgumentException('Only string or null allowed for lastName');
+        if ($lastName !== null) {
+            if (!is_string($lastName)) {
+                throw new NotStringException('lastName');
+            } elseif ($lastName === '') {
+                throw new EmptyStringException('lastName');
+            }
         }
 
-        if ($email !== null && !is_string($email)) {
-            throw new \InvalidArgumentException('Only string or null allowed for email');
+        if ($email !== null) {
+            if (!is_string($email)) {
+                throw new NotStringException('email');
+            } elseif ($email === '') {
+                throw new EmptyStringException('email');
+            }
         }
 
-        if ($gender !== null && (!is_string($gender) || !in_array($gender, ['male', 'female']))) {
-            throw new \InvalidArgumentException('Only string or null allowed for gender');
+        if ($gender !== null) {
+            if (!is_string($gender)) {
+                throw new NotStringException('email');
+            } elseif (!in_array($gender, ['male', 'female'])) {
+                throw new \InvalidArgumentException('Gender can be only [male|female]');
+            }
         }
 
-        if ($birthday !== null && !($birthday instanceof \DateTimeImmutable)) {
-            throw new \InvalidArgumentException('Only string or DateTimeImmutable allowed for birthday');
+        if ($birthday !== null && ($birthday instanceof \DateTimeImmutable) === false) {
+            throw new \InvalidArgumentException('Only DateTimeImmutable allowed for birthday');
         }
 
-        if ($avatarUrl !== null && !is_string($avatarUrl)) {
-            throw new \InvalidArgumentException('Only string or null allowed for avatarUrl');
+        if ($avatarUrl !== null) {
+            if (!is_string($avatarUrl)) {
+                throw new NotStringException('avatarUrl');
+            } elseif ($avatarUrl === '') {
+                throw new EmptyStringException('avatarUrl');
+            }
         }
 
         $this->id           = $id;

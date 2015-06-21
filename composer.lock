@@ -1,10 +1,10 @@
 {
     "_readme": [
         "This file locks the dependencies of your project to a known state",
-        "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
+        "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "ecfbefc7255c258c760949039fe8ec09",
+    "hash": "f01b1cd530eb4d7d4f51a03523a9f149",
     "packages": [
         {
             "name": "facebook/php-sdk-v4",
@@ -427,16 +427,16 @@
     "packages-dev": [
         {
             "name": "ashevchuk/phpunit-plus",
-            "version": "dev-master",
+            "version": "1.0.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/IIIEBA/phpunit-plus.git",
-                "reference": "4e260575e2cb6dc19ea54e7ac53032884cc52e5c"
+                "reference": "7b50dea2dc2305facba6dd706dff5d1573bb7854"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/IIIEBA/phpunit-plus/zipball/4e260575e2cb6dc19ea54e7ac53032884cc52e5c",
-                "reference": "4e260575e2cb6dc19ea54e7ac53032884cc52e5c",
+                "url": "https://api.github.com/repos/IIIEBA/phpunit-plus/zipball/7b50dea2dc2305facba6dd706dff5d1573bb7854",
+                "reference": "7b50dea2dc2305facba6dd706dff5d1573bb7854",
                 "shasum": ""
             },
             "require-dev": {
@@ -457,7 +457,7 @@
                 }
             ],
             "description": "Makes your unit-tests more compact and simpler",
-            "time": "2015-06-20 14:46:12"
+            "time": "2015-06-21 12:13:05"
         },
         {
             "name": "doctrine/instantiator",
@@ -867,16 +867,16 @@
         },
         {
             "name": "phpunit/phpunit",
-            "version": "4.7.4",
+            "version": "4.7.5",
             "source": {
                 "type": "git",
                 "url": "https://github.com/sebastianbergmann/phpunit.git",
-                "reference": "e5f851f324f7add846316f39e668e9deac97a103"
+                "reference": "f6701ef3faea759acd1910a7751d8d102a7fd5bc"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/e5f851f324f7add846316f39e668e9deac97a103",
-                "reference": "e5f851f324f7add846316f39e668e9deac97a103",
+                "url": "https://api.github.com/repos/sebastianbergmann/phpunit/zipball/f6701ef3faea759acd1910a7751d8d102a7fd5bc",
+                "reference": "f6701ef3faea759acd1910a7751d8d102a7fd5bc",
                 "shasum": ""
             },
             "require": {
@@ -935,7 +935,7 @@
                 "testing",
                 "xunit"
             ],
-            "time": "2015-06-18 13:33:26"
+            "time": "2015-06-21 07:23:36"
         },
         {
             "name": "phpunit/phpunit-mock-objects",
@@ -1415,9 +1415,7 @@
     ],
     "aliases": [],
     "minimum-stability": "stable",
-    "stability-flags": {
-        "ashevchuk/phpunit-plus": 20
-    },
+    "stability-flags": [],
     "prefer-stable": false,
     "prefer-lowest": false,
     "platform": {

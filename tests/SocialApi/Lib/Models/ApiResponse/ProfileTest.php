@@ -2,8 +2,12 @@
 
 namespace Tests\SocialApi\Lib\Models\ApiResponse;
 
+use PhpUnitPlus\Lib\Component\ConstructChecker;
+use PhpUnitPlus\Lib\Util\Custom\ManualInput;
+use PhpUnitPlus\Lib\Util\Custom\MergeInput;
+use PhpUnitPlus\Lib\Util\Simple\AnyInteger;
+use PhpUnitPlus\Lib\Util\Simple\AnyString;
 use SocialAPI\Lib\Model\ApiResponse\Profile;
-use SocialAPI\Lib\Util\Tests\ConstructorTester;
 
 /**
  * Class ProfileTest
@@ -12,36 +16,23 @@ use SocialAPI\Lib\Util\Tests\ConstructorTester;
  */
 class ProfileTest extends \PHPUnit_Framework_TestCase
 {
-    use ConstructorTester;
+    use ConstructChecker;
 
     /**
      * Test for __construct method and getters
      */
     public function testConstructorAndGetters()
     {
-        $success = [
-            'id'        => [324, 'test'],
-            'firstName' => ['ddd'],
-            'lastName'  => ['sss', null],
-            'email'     => ['ccc', null],
-            'gender'    => ['male', 'female', null],
-            'birthday'  => [new \DateTimeImmutable(), null],
-            'avatarUrl' => ['ava', null],
-        ];
-
-        $fail = [
-            'id'        => [null, []],
-            'firstName' => [4234, null],
-            'lastName'  => [5236],
-            'email'     => [546436],
-            'gender'    => ['bar', 4234],
-            'birthday'  => [new \DateTime(), 'foo', 341],
-            'avatarUrl' => [333],
-        ];
-
         $this->checkConstructor(
-            $success,
-            $fail,
+            [
+                new MergeInput(new AnyInteger(false, false, false), new AnyString(false, false)),
+                new AnyString(false, false),
+                new AnyString(false, true),
+                new AnyString(false, true),
+                new ManualInput(['male', 'female', null]),
+                new ManualInput([new \DateTimeImmutable(), null]),
+                new AnyString(false, true),
+            ],
             function ($id, $firstName, $lastName, $email, $gender, $birthday, $avatarUrl) {
                 $profile = new Profile($id, $firstName, $lastName, $email, $gender, $birthday, $avatarUrl);
 

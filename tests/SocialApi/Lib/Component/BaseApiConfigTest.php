@@ -2,8 +2,13 @@
 
 namespace Test\SocialApi\Lib\Component;
 
+use PhpUnitPlus\Lib\Component\ConstructChecker;
+use PhpUnitPlus\Lib\Util\Custom\ManualInput;
+use PhpUnitPlus\Lib\Util\Custom\MergeInput;
+use PhpUnitPlus\Lib\Util\Simple\AnyBool;
+use PhpUnitPlus\Lib\Util\Simple\AnyInteger;
+use PhpUnitPlus\Lib\Util\Simple\AnyString;
 use SocialAPI\Lib\Component\BaseApiConfig;
-use SocialAPI\Lib\Util\Tests\ConstructorTester;
 
 /**
  * Class BaseApiConfigTest
@@ -12,32 +17,21 @@ use SocialAPI\Lib\Util\Tests\ConstructorTester;
  */
 class BaseApiConfigTest extends \PHPUnit_Framework_TestCase
 {
-    use ConstructorTester;
+    use ConstructChecker;
 
     /**
      * Test __construct method and getters
      */
     public function testConstructAndGetters()
     {
-        $valid = [
-            'isEnabled'     => [false],
-            'appId'         => [43, 'test'],
-            'appSecret'     => ['test'],
-            'redirectUrl'   => ['test'],
-            'scopeList'     => [['test']],
-        ];
-
-        $invalid = [
-            'isEnabled'     => [244, 3.5, 'em', [], new \stdClass(), null],
-            'appId'         => [0, -1, 4.8, [], new \stdClass(), null],
-            'appSecret'     => [5, 4.8, [], new \stdClass(), null],
-            'redirectUrl'   => [8, 4.8, [], new \stdClass(), null],
-            'scopeList'     => [[]],
-        ];
-
         $this->checkConstructor(
-            $valid,
-            $invalid,
+            [
+                new AnyBool(),
+                new MergeInput(new AnyString(false, false), new AnyInteger(false, false, false)),
+                new AnyString(false, false),
+                new AnyString(false, false),
+                new ManualInput([['test']], [[]])
+            ],
             function ($isEnabled, $appId, $appSecret, $redirectUrl, $scopeList) {
                 $config = new BaseApiConfigTestClass(
                     $isEnabled,

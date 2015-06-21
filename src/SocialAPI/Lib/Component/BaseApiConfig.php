@@ -2,6 +2,10 @@
 
 namespace SocialAPI\Lib\Component;
 
+use SocialAPI\Lib\Exception\InvalidArgument\EmptyArrayException;
+use SocialAPI\Lib\Exception\InvalidArgument\EmptyStringException;
+use SocialAPI\Lib\Exception\InvalidArgument\NotStringException;
+
 /**
  * Class BaseApiConfig
  *
@@ -93,24 +97,30 @@ class BaseApiConfig implements ApiConfigInterface
             throw new \InvalidArgumentException('Only bool isEnabled allowed');
         }
 
-        if (!is_int($appId)) {
-            if (!is_string($appId)) {
-                throw new \InvalidArgumentException('Only int appId allowed');
+        if (is_int($appId)) {
+            if ($appId < 1) {
+                throw new \InvalidArgumentException('App id must be greater then 0');
             }
-        } elseif ($appId < 1) {
-            throw new \InvalidArgumentException('App id must be greater then 0');
+        } elseif (!is_string($appId)) {
+            throw new NotStringException('appId');
+        } elseif ($appId === '') {
+            throw new EmptyStringException('appId');
         }
 
         if (!is_string($appSecret)) {
-            throw new \InvalidArgumentException('Only string allowed for appSecret');
+            throw new NotStringException('lastName');
+        } elseif ($appSecret === '') {
+            throw new EmptyStringException('lastName');
         }
 
         if (!is_string($redirectUrl)) {
-            throw new \InvalidArgumentException('Only string allowed for redirectUrl');
+            throw new NotStringException('lastName');
+        } elseif ($redirectUrl === '') {
+            throw new EmptyStringException('lastName');
         }
 
         if (empty($scopeList)) {
-            throw new \InvalidArgumentException('You must set at least one scope');
+            throw new EmptyArrayException('scopeList');
         }
 
         $this->isEnabled    = $isEnabled;
