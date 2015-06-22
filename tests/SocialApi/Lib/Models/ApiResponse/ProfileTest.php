@@ -2,7 +2,7 @@
 
 namespace Tests\SocialApi\Lib\Models\ApiResponse;
 
-use PhpUnitPlus\Lib\Component\ConstructChecker;
+use PhpUnitPlus\Lib\Component\InputDataChecker;
 use PhpUnitPlus\Lib\Util\Custom\ManualInput;
 use PhpUnitPlus\Lib\Util\Custom\MergeInput;
 use PhpUnitPlus\Lib\Util\Simple\AnyInteger;
@@ -16,14 +16,14 @@ use SocialAPI\Lib\Model\ApiResponse\Profile;
  */
 class ProfileTest extends \PHPUnit_Framework_TestCase
 {
-    use ConstructChecker;
+    use InputDataChecker;
 
     /**
      * Test for __construct method and getters
      */
     public function testConstructorAndGetters()
     {
-        $this->checkConstructor(
+        $this->checkInputData(
             [
                 new MergeInput(new AnyInteger(false, false, false), new AnyString(false, false)),
                 new AnyString(false, false),

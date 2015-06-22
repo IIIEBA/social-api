@@ -2,7 +2,7 @@
 
 namespace Test\SocialApi\Lib\Component;
 
-use PhpUnitPlus\Lib\Component\ConstructChecker;
+use PhpUnitPlus\Lib\Component\InputDataChecker;
 use PhpUnitPlus\Lib\Util\Custom\ManualInput;
 use PhpUnitPlus\Lib\Util\Custom\MergeInput;
 use PhpUnitPlus\Lib\Util\Simple\AnyBool;
@@ -17,14 +17,14 @@ use SocialAPI\Lib\Component\BaseApiConfig;
  */
 class BaseApiConfigTest extends \PHPUnit_Framework_TestCase
 {
-    use ConstructChecker;
+    use InputDataChecker;
 
     /**
      * Test __construct method and getters
      */
     public function testConstructAndGetters()
     {
-        $this->checkConstructor(
+        $this->checkInputData(
             [
                 new AnyBool(),
                 new MergeInput(new AnyString(false, false), new AnyInteger(false, false, false)),
@@ -49,7 +49,6 @@ class BaseApiConfigTest extends \PHPUnit_Framework_TestCase
             }
         );
     }
-
 }
 
 /**

@@ -32,6 +32,6 @@
         "phpunit/phpunit": "^4.7",
         "phpunit/phpunit-mock-objects": "^2.3",
         "phpunit/php-code-coverage": "^2.1",
-        "ashevchuk/phpunit-plus": "^1.0"
+        "ashevchuk/phpunit-plus": "^1.1"
     }
 }
