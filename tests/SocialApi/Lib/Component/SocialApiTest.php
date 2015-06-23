@@ -207,6 +207,19 @@ class SocialApiTest extends PHPUnit_Framework_TestCase
     }
 
     /**
+     * Test getGitHub method
+     * @throws SocialApiException
+     */
+    public function testGetGitHub()
+    {
+        $api        = $this->mockApi();
+        $socialApi  = new SocialApi(Request::createFromGlobals(), []);
+        $socialApi->addApi('github', $api);
+
+        $this->assertEquals($api, $socialApi->getGitHub());
+    }
+
+    /**
      * Test getEnabledApiList method
      * @throws SocialApiException
      */

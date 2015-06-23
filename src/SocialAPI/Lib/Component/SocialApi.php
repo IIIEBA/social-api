@@ -7,6 +7,8 @@ use SocialAPI\Lib\Exception\SocialApiException;
 use SocialAPI\Lib\Util\Logger\LoggerTrait;
 use SocialAPI\Module\Facebook\Component\Facebook;
 use SocialAPI\Module\Facebook\Component\FacebookConfig;
+use SocialAPI\Module\GitHub\Component\GitHub;
+use SocialAPI\Module\GitHub\Component\GitHubConfig;
 use SocialAPI\Module\Instagram\Component\Instagram;
 use SocialAPI\Module\Instagram\Component\InstagramConfig;
 use SocialAPI\Module\Vk\Component\VkConfig;
@@ -79,6 +81,7 @@ class SocialApi implements LoggerAwareInterface
 
                     $this->addApi($apiName, $api);
                     break;
+
                 case 'vk':
                     $config = new VkConfig(
                         isset($config['isEnabled'])     ? $config['isEnabled']      : null,
@@ -92,6 +95,7 @@ class SocialApi implements LoggerAwareInterface
 
                     $this->addApi($apiName, $api);
                     break;
+
                 case 'instagram':
                     $config = new InstagramConfig(
                         isset($config['isEnabled'])     ? $config['isEnabled']      : null,
@@ -102,6 +106,20 @@ class SocialApi implements LoggerAwareInterface
                     );
 
                     $api = new Instagram($config, $request, $this->getLogger());
+
+                    $this->addApi($apiName, $api);
+                    break;
+
+                case 'github':
+                    $config = new GitHubConfig(
+                        isset($config['isEnabled'])     ? $config['isEnabled']      : null,
+                        isset($config['appId'])         ? $config['appId']          : null,
+                        isset($config['appSecret'])     ? $config['appSecret']      : null,
+                        isset($config['redirectUrl'])   ? $config['redirectUrl']    : null,
+                        isset($config['scopeList'])     ? $config['scopeList']      : null
+                    );
+
+                    $api = new GitHub($config, $request, $this->getLogger());
 
                     $this->addApi($apiName, $api);
                     break;
@@ -211,5 +229,15 @@ class SocialApi implements LoggerAwareInterface
     public function getInstagram()
     {
         return $this->getApi('instagram');
+    }
+
+    /**
+     * Get GitHub API interface
+     * @return ApiInterface
+     * @throws SocialApiException
+     */
+    public function getGitHub()
+    {
+        return $this->getApi('github');
     }
 }
