@@ -3,8 +3,9 @@
 namespace SocialAPI\Module\GitHub\Component;
 
 use SocialAPI\Lib\Component\BaseApi;
+use SocialAPI\Lib\Exception\BaseApiException;
 use SocialAPI\Lib\Exception\InvalidArgument\NotStringException;
-use SocialAPI\Lib\Exception\SocialApiException;
+use SocialAPI\Lib\Model\ApiResponse\Profile;
 use SocialAPI\Lib\Model\ApiResponse\ProfileInterface;
 use SocialAPI\Module\GitHub\Exception\GitHubModuleException;
 
@@ -24,6 +25,11 @@ class GitHub extends BaseApi
      * Url for all authorized API actions
      */
     const API_URL = 'https://api.github.com/';
+
+    /**
+     * Request method to API
+     */
+    const METHOD = 'get';
 
     /**
      * Init api method
@@ -145,114 +151,65 @@ class GitHub extends BaseApi
         return $this->getAccessToken();
     }
 
-    public function callApiMethod($method, array $params = [])
+    /**
+     * Get current profile data
+     * @return ProfileInterface
+     * @throws BaseApiException
+     */
+    public function getMyProfile()
     {
-        if ($this->getAccessToken() === null) {
-            $msg = 'You need to set access token before use API methods';
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object' => $this,
-                ]
-            );
+        $profile    = $this->callApiMethod(self::API_URL . 'user', [], self::METHOD);
+        $email      = $this->getMyEmail();
 
-            throw new GitHubModuleException($msg);
-        }
+        $name = $this->parseName($profile->name);
 
-        if (!is_string($method)) {
-            $msg = 'Only string allowed for method name';
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object' => $this,
-                ]
-            );
+        return new Profile(
+            $profile->id,
+            $name['first'],
+            $name['last'],
+            $email,
+            $this->parseGender(null),
+            $this->parseBirthday(null),
+            $this->parseAvatarUrl($profile->avatar_url)
+        );
+    }
 
-            throw new NotStringException('method');
-        }
+    /**
+     * Get user primary email
+     * @return string|null
+     * @throws BaseApiException
+     */
+    public function getMyEmail()
+    {
+        $result = null;
+        $emails = $this->callApiMethod(self::API_URL . 'user/emails', [], self::METHOD);
 
-        $params = array_merge(['access_token' => $this->getAccessToken()], $params);
-
-        var_dump(self::API_URL . $method);
-        try {
-            $response = $this->getHttpClient()->post(
-                self::API_URL . $method,
-                [
-                    'headers' => [
-                        'Accept' => 'application/json',
-                    ],
-                    'form_params' => $params,
-                ]
-            );
-        } catch (\Exception $e) {
-            $msg = 'Fail to send http request to API';
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object'    => $this,
-                    'exception' => $e,
-                ]
-            );
-
-            throw new GitHubModuleException($msg);
-        }
-
-        if (empty($response->getBody())) {
-            $msg = 'Request to API return empty result';
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object'     => $this,
-                    'statusCode' => $response->getStatusCode(),
-                ]
-            );
-
-            throw new GitHubModuleException($msg);
-        }
-
-        $result = json_decode($response->getBody());
-        if (isset($result->error)) {
-            $msg = 'Request to API was unsuccessful with error: ' . $result->error->error_msg;
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object'        => $this,
-                    'action'        => $method,
-                    'params'        => $params,
-                    'statusCode'    => $response->getStatusCode(),
-                    'result'        => $result,
-                ]
-            );
-
-            throw new GitHubModuleException($msg);
+        foreach ($emails as $email) {
+            if ($email->primary) {
+                $result = $email->email;
+                break;
+            }
         }
 
         return $result;
     }
 
-    public function getMyProfile()
-    {
-        return $this->callApiMethod('user');
-    }
-
     /**
      * Post message on member wall
-     *
-     * @return bool
+     * @throws GitHubModuleException
      */
     public function postOnMyWall()
     {
-        // TODO: Implement postOnMyWall() method.
+        throw new GitHubModuleException('This action is not available for sites by api :(');
     }
 
     /**
      * Get list of member friends with basic data
-     *
-     * @return ProfileInterface[]
+     * @throws GitHubModuleException
      */
     public function getFriends()
     {
-        // TODO: Implement getFriends() method.
+        throw new GitHubModuleException('This action is not available for sites by api :(');
     }
 
     /**
@@ -264,16 +221,43 @@ class GitHub extends BaseApi
      */
     public function getProfile($memberId)
     {
-        $method = "users";
-        if ($memberId !== null) {
-            if (!is_string($memberId)) {
-                throw new NotStringException('memberId');
-            }
-
-            $method .= "/{$memberId}";
+        if (!is_string($memberId)) {
+            throw new NotStringException('memberId');
         }
 
-        return $this->callApiMethod($method . $memberId);
+        $method = "users/{$memberId}";
+
+        $profile = $this->callApiMethod(self::API_URL . $method, [], self::METHOD);
+        $name    = $this->parseName($profile->name);
+
+        return new Profile(
+            $profile->id,
+            $name['first'],
+            $name['last'],
+            $profile->email,
+            $this->parseGender(null),
+            $this->parseBirthday(null),
+            $this->parseAvatarUrl($profile->avatar_url)
+        );
+    }
+
+    /**
+     * Convert name to first and last name
+     * @param string $name
+     * @return array
+     */
+    public function parseName($name)
+    {
+        if (!is_string($name)) {
+            throw new NotStringException('name');
+        }
+
+        $parts = explode(" ", trim($name));
+
+        return [
+            'first' => reset($parts),
+            'last'  => end($parts),
+        ];
     }
 
     /**
@@ -285,7 +269,7 @@ class GitHub extends BaseApi
      */
     public function parseGender($gender = null)
     {
-        // TODO: Implement parseGender() method.
+        return $gender;
     }
 
     /**
@@ -297,7 +281,7 @@ class GitHub extends BaseApi
      */
     public function parseBirthday($birthday = null)
     {
-        // TODO: Implement parseBirthday() method.
+        return $birthday;
     }
 
     /**
@@ -309,5 +293,6 @@ class GitHub extends BaseApi
      */
     public function parseAvatarUrl($url = null)
     {
-        // TODO: Implement parseAvatarUrl() method.
-}}
+        return $url;
+    }
+}

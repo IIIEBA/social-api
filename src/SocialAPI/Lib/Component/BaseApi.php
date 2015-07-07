@@ -6,6 +6,7 @@ use GuzzleHttp\Client;
 use Psr\Log\LoggerAwareInterface;
 use Psr\Log\LoggerInterface;
 use SocialAPI\Lib\Exception\BaseApiException;
+use SocialAPI\Lib\Exception\InvalidArgument\NotStringException;
 use SocialAPI\Lib\Model\ApiResponse\ProfileInterface;
 use SocialAPI\Lib\Util\Logger\LoggerTrait;
 use Symfony\Component\HttpFoundation\Request;
@@ -38,6 +39,24 @@ abstract class BaseApi implements ApiInterface, LoggerAwareInterface
      * @var Client
      */
     protected $httpClient;
+
+    /**
+     * Init facebook api class
+     * @param ApiConfigInterface $config
+     * @param Request $request
+     * @param LoggerInterface $logger
+     */
+    public function __construct(ApiConfigInterface $config, Request $request, LoggerInterface $logger = null)
+    {
+        $this->config  = $config;
+        $this->request = $request;
+
+        if ($logger !== null) {
+            $this->setLogger($logger);
+        }
+
+        $this->initApi();
+    }
 
     /**
      * Get config
@@ -100,24 +119,6 @@ abstract class BaseApi implements ApiInterface, LoggerAwareInterface
         }
 
         return $this->httpClient;
-    }
-
-    /**
-     * Init facebook api class
-     * @param ApiConfigInterface $config
-     * @param Request $request
-     * @param LoggerInterface $logger
-     */
-    public function __construct(ApiConfigInterface $config, Request $request, LoggerInterface $logger = null)
-    {
-        $this->config  = $config;
-        $this->request = $request;
-
-        if ($logger !== null) {
-            $this->setLogger($logger);
-        }
-
-        $this->initApi();
     }
 
     /**
@@ -222,6 +223,183 @@ abstract class BaseApi implements ApiInterface, LoggerAwareInterface
             // We are appending raw binary
         }
         return bin2hex(substr($buf, 0, $bytes));
+    }
+
+    /**
+     * Send request to API
+     * @param string $url
+     * @param array $params
+     * @param string $method Only [post|get] allowed
+     * @param string $responseType Only [json] allowed
+     * @return mixed
+     * @throws BaseApiException
+     */
+    public function callApiMethod($url, array $params = [], $method = 'post', $responseType = 'json')
+    {
+        if ($this->getAccessToken() === null) {
+            $msg = 'You need to set access token before use API methods';
+            $this->getLogger()->error(
+                $msg,
+                [
+                    'object' => $this,
+                ]
+            );
+
+            throw new BaseApiException($msg);
+        }
+
+        if (!is_string($url)) {
+            $msg = 'Only string allowed for url name';
+            $this->getLogger()->error(
+                $msg,
+                [
+                    'object' => $this,
+                ]
+            );
+
+            throw new NotStringException('url');
+        }
+
+        if (!is_string($method)) {
+            $msg = 'Only string allowed for method type';
+            $this->getLogger()->error(
+                $msg,
+                [
+                    'object' => $this,
+                ]
+            );
+
+            throw new NotStringException('method');
+        } elseif (!in_array($method, ['post', 'get'])) {
+            $msg = 'Only post and get method type allowed';
+            $this->getLogger()->error(
+                $msg,
+                [
+                    'object' => $this,
+                ]
+            );
+
+            throw new \InvalidArgumentException($msg);
+        }
+
+        if (!is_string($responseType)) {
+            $msg = 'Only string allowed for responseType';
+            $this->getLogger()->error(
+                $msg,
+                [
+                    'object' => $this,
+                ]
+            );
+
+            throw new NotStringException('responseType');
+        } elseif (!in_array($responseType, ['json'])) {
+            $msg = 'Only json response type allowed';
+            $this->getLogger()->error(
+                $msg,
+                [
+                    'object' => $this,
+                ]
+            );
+
+            throw new \InvalidArgumentException($msg);
+        }
+
+        // Prepare options
+        $headers = [
+            'headers' => [
+                'Accept' => 'application/json',
+            ],
+        ];
+        $params = array_merge(['access_token' => $this->getAccessToken()], $params);
+
+        // Trying to send request
+        try {
+            switch ($method) {
+                case 'post':
+                    $options  = array_merge($headers, ['form_params' => $params]);
+                    $response = $this->getHttpClient()->post($url, $options);
+                    break;
+
+                case 'get':
+                    $response = $this->getHttpClient()->get($url . '?' . http_build_query($params), $headers);
+                    break;
+
+                default:
+                    $msg = 'Strange method type was given';
+                    $this->getLogger()->error(
+                        $msg,
+                        [
+                            'object' => $this,
+                            'method' => $method,
+                        ]
+                    );
+
+                    throw new BaseApiException($msg);
+            }
+        } catch (\Exception $e) {
+            $msg = 'Fail to send http request to API';
+            $this->getLogger()->error(
+                $msg,
+                [
+                    'object'    => $this,
+                    'exception' => $e,
+                ]
+            );
+
+            throw new BaseApiException($msg);
+        }
+
+        // Trying to get response data
+        if (empty($response->getBody())) {
+            $msg = 'Request to API return empty result';
+            $this->getLogger()->error(
+                $msg,
+                [
+                    'object'     => $this,
+                    'statusCode' => $response->getStatusCode(),
+                ]
+            );
+
+            throw new BaseApiException($msg);
+        }
+
+        // Decode response
+        switch ($responseType) {
+            case 'json':
+                $result = json_decode($response->getBody());
+                break;
+
+            default;
+                $msg = 'Strange response type was given';
+                $this->getLogger()->error(
+                    $msg,
+                    [
+                        'object'        => $this,
+                        'responseType'  => $responseType,
+                    ]
+                );
+
+                throw new BaseApiException($msg);
+        }
+
+        // Checking response for errors
+        if (isset($result->error)) {
+            $msg = 'Request to API was unsuccessful with error: ' . $result->error->error_msg;
+            $this->getLogger()->error(
+                $msg,
+                [
+                    'object'        => $this,
+                    'method'        => $method,
+                    'responseType'  => $responseType,
+                    'statusCode'    => $response->getStatusCode(),
+                    'result'        => $result,
+                ]
+            );
+
+            throw new BaseApiException($msg);
+        }
+
+        return $result;
     }
 
     /**
