@@ -26,6 +26,11 @@ class Instagram extends BaseApi implements ApiInterface
     const API_URL = 'https://api.instagram.com/v1/';
 
     /**
+     * Request method to API
+     */
+    const METHOD = 'get';
+
+    /**
      * Init api method
      */
     public function initApi()
@@ -138,93 +143,6 @@ class Instagram extends BaseApi implements ApiInterface
     }
 
     /**
-     * Call selected API method and check result, if ok - return it
-     * @param $url
-     * @param array $params
-     * @return mixed
-     *
-     * @throws InstagramModuleException
-     */
-    public function callApiMethod($url, array $params = [])
-    {
-        if ($this->getAccessToken() === null) {
-            $msg = 'You need to set access token before use API methods';
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object' => $this,
-                ]
-            );
-
-            throw new InstagramModuleException($msg);
-        }
-
-        if (!is_string($url)) {
-            $msg = 'Only string allowed for url';
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object' => $this,
-                ]
-            );
-
-            throw new InstagramModuleException($msg);
-        }
-
-        $params = array_merge(['access_token' => $this->getAccessToken()], $params);
-
-        try {
-            $response = $this->getHttpClient()->get($url . '?' . http_build_query($params));
-            echo $response->getStatusCode();
-        } catch (\Exception $e) {
-            $msg = 'Fail to send http request to API';
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object'    => $this,
-                    'url'       => $url,
-                    'params'    => $params,
-                    'exception' => $e,
-                ]
-            );
-
-            throw new InstagramModuleException($msg);
-        }
-
-        if (empty($response->getBody())) {
-            $msg = 'Request to API return empty result';
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object'     => $this,
-                    'statusCode' => $response->getStatusCode(),
-                ]
-            );
-
-            throw new InstagramModuleException($msg);
-        }
-
-        $result = json_decode($response->getBody());
-        if (isset($result->meta->error_type)) {
-            $msg = 'Request to API was unsuccessful with error: ' . $result->meta->error_message;
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object'        => $this,
-                    'url'           => $url,
-                    'params'        => $params,
-                    'statusCode'    => $result->meta->code,
-                    'result'        => $result,
-                ]
-            );
-
-            throw new InstagramModuleException($msg);
-        }
-
-        return $result;
-    }
-
-    /**
      * Get my profile data
      * @return ProfileInterface
      */
@@ -241,7 +159,7 @@ class Instagram extends BaseApi implements ApiInterface
      */
     public function postOnMyWall()
     {
-        throw new InstagramModuleException('This action is not available for sites by ip :(');
+        throw new InstagramModuleException('This action is not available for sites by api :(');
     }
 
     /**
@@ -252,7 +170,7 @@ class Instagram extends BaseApi implements ApiInterface
      */
     public function getFriends()
     {
-        throw new InstagramModuleException('This action is not available for sites by ip :(');
+        throw new InstagramModuleException('This action is not available for sites by api :(');
     }
 
     /**
@@ -263,7 +181,7 @@ class Instagram extends BaseApi implements ApiInterface
     public function getProfile($memberId)
     {
         $url        = self::API_URL . "users/{$memberId}/";
-        $response   = $this->callApiMethod($url);
+        $response   = $this->callApiMethod($url, [], self::METHOD);
         $profile    = $response->data;
 
         $firstName  = $profile->username;
@@ -295,7 +213,7 @@ class Instagram extends BaseApi implements ApiInterface
      */
     public function parseGender($gender = null)
     {
-        return null;
+        return $gender;
     }
 
     /**
@@ -305,7 +223,7 @@ class Instagram extends BaseApi implements ApiInterface
      */
     public function parseBirthday($birthday = null)
     {
-        return null;
+        return $birthday;
     }
 
     /**

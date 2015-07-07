@@ -32,6 +32,11 @@ class Vk extends BaseApi implements ApiInterface
     const API_URL = 'https://api.vk.com/method/';
 
     /**
+     * Request method to API
+     */
+    const METHOD = 'post';
+
+    /**
      * List of fields which need to get
      * @var string
      */
@@ -197,7 +202,7 @@ class Vk extends BaseApi implements ApiInterface
      * @return object
      * @throws VkModuleApiException
      */
-    public function callApiMethod($method, array $params = [])
+    public function callApiMethod_old($method, array $params = [])
     {
         if ($this->getAccessToken() === null) {
             $msg = 'You need to set access token before use API methods';
@@ -290,7 +295,11 @@ class Vk extends BaseApi implements ApiInterface
     public function getFriends()
     {
         $result     = [];
-        $response   = $this->callApiMethod('friends.get', ['fields' => $this->getProfileFieldsList()]);
+        $response   = $this->callApiMethod(
+            self::METHOD . 'friends.get',
+            ['fields' => $this->getProfileFieldsList()],
+            self::METHOD
+        );
 
         foreach ($response->response as $profile) {
             $result[] = new Profile(
@@ -334,7 +343,7 @@ class Vk extends BaseApi implements ApiInterface
             $params['user_ids'] = $memberId;
         }
 
-        $response = $this->callApiMethod('users.get', $params);
+        $response = $this->callApiMethod(self::API_URL . 'users.get', $params, self::METHOD);
 
         $profile = reset($response->response);
 
