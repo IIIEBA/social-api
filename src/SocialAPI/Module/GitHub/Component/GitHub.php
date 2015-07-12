@@ -7,6 +7,8 @@ use SocialAPI\Lib\Exception\BaseApiException;
 use SocialAPI\Lib\Exception\InvalidArgument\NotStringException;
 use SocialAPI\Lib\Model\ApiResponse\Profile;
 use SocialAPI\Lib\Model\ApiResponse\ProfileInterface;
+use SocialAPI\Lib\Model\Enum\RequestMethod;
+use SocialAPI\Lib\Model\Enum\ResponseType;
 use SocialAPI\Module\GitHub\Exception\GitHubModuleException;
 
 class GitHub extends BaseApi
@@ -29,7 +31,12 @@ class GitHub extends BaseApi
     /**
      * Request method to API
      */
-    const METHOD = 'get';
+    const METHOD = RequestMethod::GET;
+
+    /**
+     * API response type
+     */
+    const RESPONSE_TYPE = ResponseType::JSON;
 
     /**
      * Init api method
@@ -158,7 +165,12 @@ class GitHub extends BaseApi
      */
     public function getMyProfile()
     {
-        $profile    = $this->callApiMethod(self::API_URL . 'user', [], self::METHOD);
+        $profile    = $this->callApiMethod(
+            self::API_URL . 'user',
+            [],
+            new RequestMethod(self::METHOD),
+            new ResponseType(self::RESPONSE_TYPE)
+        );
         $email      = $this->getMyEmail();
 
         $name = $this->parseName($profile->name);
@@ -182,7 +194,12 @@ class GitHub extends BaseApi
     public function getMyEmail()
     {
         $result = null;
-        $emails = $this->callApiMethod(self::API_URL . 'user/emails', [], self::METHOD);
+        $emails = $this->callApiMethod(
+            self::API_URL . 'user/emails',
+            [],
+            new RequestMethod(self::METHOD),
+            new ResponseType(self::RESPONSE_TYPE)
+        );
 
         foreach ($emails as $email) {
             if ($email->primary) {
@@ -227,7 +244,12 @@ class GitHub extends BaseApi
 
         $method = "users/{$memberId}";
 
-        $profile = $this->callApiMethod(self::API_URL . $method, [], self::METHOD);
+        $profile = $this->callApiMethod(
+            self::API_URL . $method,
+            [],
+            new RequestMethod(self::METHOD),
+            new ResponseType(self::RESPONSE_TYPE)
+        );
         $name    = $this->parseName($profile->name);
 
         return new Profile(

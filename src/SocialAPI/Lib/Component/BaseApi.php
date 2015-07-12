@@ -8,6 +8,8 @@ use Psr\Log\LoggerInterface;
 use SocialAPI\Lib\Exception\BaseApiException;
 use SocialAPI\Lib\Exception\InvalidArgument\NotStringException;
 use SocialAPI\Lib\Model\ApiResponse\ProfileInterface;
+use SocialAPI\Lib\Model\Enum\RequestMethod;
+use SocialAPI\Lib\Model\Enum\ResponseType;
 use SocialAPI\Lib\Util\Logger\LoggerTrait;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -227,14 +229,16 @@ abstract class BaseApi implements ApiInterface, LoggerAwareInterface
 
     /**
      * Send request to API
+     *
      * @param string $url
      * @param array $params
-     * @param string $method Only [post|get] allowed
-     * @param string $responseType Only [json] allowed
+     * @param RequestMethod|string $method Only [post|get] allowed
+     * @param ResponseType|string $responseType Only [json] allowed
+     *
      * @return mixed
      * @throws BaseApiException
      */
-    public function callApiMethod($url, array $params = [], $method = 'post', $responseType = 'json')
+    public function callApiMethod($url, array $params = [], RequestMethod $method, ResponseType $responseType)
     {
         if ($this->getAccessToken() === null) {
             $msg = 'You need to set access token before use API methods';
@@ -260,50 +264,6 @@ abstract class BaseApi implements ApiInterface, LoggerAwareInterface
             throw new NotStringException('url');
         }
 
-        if (!is_string($method)) {
-            $msg = 'Only string allowed for method type';
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object' => $this,
-                ]
-            );
-
-            throw new NotStringException('method');
-        } elseif (!in_array($method, ['post', 'get'])) {
-            $msg = 'Only post and get method type allowed';
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object' => $this,
-                ]
-            );
-
-            throw new \InvalidArgumentException($msg);
-        }
-
-        if (!is_string($responseType)) {
-            $msg = 'Only string allowed for responseType';
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object' => $this,
-                ]
-            );
-
-            throw new NotStringException('responseType');
-        } elseif (!in_array($responseType, ['json'])) {
-            $msg = 'Only json response type allowed';
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object' => $this,
-                ]
-            );
-
-            throw new \InvalidArgumentException($msg);
-        }
-
         // Prepare options
         $headers = [
             'headers' => [
@@ -314,13 +274,13 @@ abstract class BaseApi implements ApiInterface, LoggerAwareInterface
 
         // Trying to send request
         try {
-            switch ($method) {
-                case 'post':
+            switch ($method->getValue()) {
+                case RequestMethod::POST:
                     $options  = array_merge($headers, ['form_params' => $params]);
                     $response = $this->getHttpClient()->post($url, $options);
                     break;
 
-                case 'get':
+                case RequestMethod::GET:
                     $response = $this->getHttpClient()->get($url . '?' . http_build_query($params), $headers);
                     break;
 
@@ -364,8 +324,8 @@ abstract class BaseApi implements ApiInterface, LoggerAwareInterface
         }
 
         // Decode response
-        switch ($responseType) {
-            case 'json':
+        switch ($responseType->getValue()) {
+            case ResponseType::JSON:
                 $result = json_decode($response->getBody());
                 break;
 

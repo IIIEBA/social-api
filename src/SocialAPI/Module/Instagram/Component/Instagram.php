@@ -6,6 +6,8 @@ use SocialAPI\Lib\Component\ApiInterface;
 use SocialAPI\Lib\Component\BaseApi;
 use SocialAPI\Lib\Model\ApiResponse\Profile;
 use SocialAPI\Lib\Model\ApiResponse\ProfileInterface;
+use SocialAPI\Lib\Model\Enum\RequestMethod;
+use SocialAPI\Lib\Model\Enum\ResponseType;
 use SocialAPI\Module\Instagram\Exception\InstagramModuleException;
 
 class Instagram extends BaseApi implements ApiInterface
@@ -28,7 +30,12 @@ class Instagram extends BaseApi implements ApiInterface
     /**
      * Request method to API
      */
-    const METHOD = 'get';
+    const METHOD = RequestMethod::GET;
+
+    /**
+     * API Response type
+     */
+    const RESPONSE_TYPE = ResponseType::JSON;
 
     /**
      * Init api method
@@ -181,7 +188,12 @@ class Instagram extends BaseApi implements ApiInterface
     public function getProfile($memberId)
     {
         $url        = self::API_URL . "users/{$memberId}/";
-        $response   = $this->callApiMethod($url, [], self::METHOD);
+        $response   = $this->callApiMethod(
+            $url,
+            [],
+            new RequestMethod(self::METHOD),
+            new ResponseType(self::RESPONSE_TYPE)
+        );
         $profile    = $response->data;
 
         $firstName  = $profile->username;

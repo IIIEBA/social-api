@@ -4,8 +4,41 @@
         "Read more about it at https://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "e47f133b9f632c28e640ac31af257678",
+    "hash": "04a4291ef91d6f1122bbae3d3a699862",
     "packages": [
+        {
+            "name": "ashevchuk/enum",
+            "version": "0.1",
+            "source": {
+                "type": "git",
+                "url": "https://github.com/IIIEBA/enum.git",
+                "reference": "fcd21d26a07a5b2cdecb9536b69063bda03a2428"
+            },
+            "dist": {
+                "type": "zip",
+                "url": "https://api.github.com/repos/IIIEBA/enum/zipball/fcd21d26a07a5b2cdecb9536b69063bda03a2428",
+                "reference": "fcd21d26a07a5b2cdecb9536b69063bda03a2428",
+                "shasum": ""
+            },
+            "require-dev": {
+                "phpunit/phpunit": "~4.7"
+            },
+            "type": "library",
+            "autoload": {
+                "psr-0": {
+                    "Enum\\": "src"
+                }
+            },
+            "notification-url": "https://packagist.org/downloads/",
+            "authors": [
+                {
+                    "name": "Andrew Shevchuk",
+                    "email": "shevchuk@be-aware.com.ua"
+                }
+            ],
+            "description": "Add enum to php",
+            "time": "2015-07-09 08:38:56"
+        },
         {
             "name": "facebook/php-sdk-v4",
             "version": "4.0.23",

@@ -7,6 +7,8 @@ use SocialAPI\Lib\Component\BaseApi;
 use SocialAPI\Lib\Component\ApiInterface;
 use SocialAPI\Lib\Model\ApiResponse\Profile;
 use SocialAPI\Lib\Model\ApiResponse\ProfileInterface;
+use SocialAPI\Lib\Model\Enum\RequestMethod;
+use SocialAPI\Lib\Model\Enum\ResponseType;
 use SocialAPI\Module\Vk\Exception\VkModuleApiException;
 
 class Vk extends BaseApi implements ApiInterface
@@ -34,7 +36,12 @@ class Vk extends BaseApi implements ApiInterface
     /**
      * Request method to API
      */
-    const METHOD = 'post';
+    const METHOD = RequestMethod::POST;
+
+    /**
+     * API response type
+     */
+    const RESPONSE_TYPE = ResponseType::JSON;
 
     /**
      * List of fields which need to get
@@ -196,89 +203,6 @@ class Vk extends BaseApi implements ApiInterface
     }
 
     /**
-     * Prepare data for calling selected API action and call it
-     * @param string $method
-     * @param array $params
-     * @return object
-     * @throws VkModuleApiException
-     */
-    public function callApiMethod_old($method, array $params = [])
-    {
-        if ($this->getAccessToken() === null) {
-            $msg = 'You need to set access token before use API methods';
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object' => $this,
-                ]
-            );
-
-            throw new VkModuleApiException($msg);
-        }
-
-        if (!is_string($method)) {
-            $msg = 'Only string allowed for method name';
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object' => $this,
-                ]
-            );
-
-            throw new VkModuleApiException($msg);
-        }
-
-        $params = array_merge(['access_token' => $this->getAccessToken()], $params);
-
-        try {
-            $response = $this->getHttpClient()->post(self::API_URL . $method, ['form_params' => $params]);
-        } catch (\Exception $e) {
-            $msg = 'Fail to send http request to API';
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object'    => $this,
-                    'exception' => $e,
-                ]
-            );
-
-            throw new VkModuleApiException($msg);
-        }
-
-        if (empty($response->getBody())) {
-            $msg = 'Request to API return empty result';
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object'     => $this,
-                    'statusCode' => $response->getStatusCode(),
-                ]
-            );
-
-            throw new VkModuleApiException($msg);
-        }
-
-        $result = json_decode($response->getBody());
-        if (isset($result->error)) {
-            $msg = 'Request to API was unsuccessful with error: ' . $result->error->error_msg;
-            $this->getLogger()->error(
-                $msg,
-                [
-                    'object'        => $this,
-                    'action'        => $method,
-                    'params'        => $params,
-                    'statusCode'    => $response->getStatusCode(),
-                    'result'        => $result,
-                ]
-            );
-
-            throw new VkModuleApiException($msg);
-        }
-
-        return $result;
-    }
-
-    /**
      * Post msg on my wall
      *
      * @throws VkModuleApiException
@@ -296,9 +220,10 @@ class Vk extends BaseApi implements ApiInterface
     {
         $result     = [];
         $response   = $this->callApiMethod(
-            self::METHOD . 'friends.get',
+            self::API_URL . 'friends.get',
             ['fields' => $this->getProfileFieldsList()],
-            self::METHOD
+            new RequestMethod(self::METHOD),
+            new ResponseType(self::RESPONSE_TYPE)
         );
 
         foreach ($response->response as $profile) {
@@ -343,7 +268,12 @@ class Vk extends BaseApi implements ApiInterface
             $params['user_ids'] = $memberId;
         }
 
-        $response = $this->callApiMethod(self::API_URL . 'users.get', $params, self::METHOD);
+        $response = $this->callApiMethod(
+            self::API_URL . 'users.get',
+            $params,
+            new RequestMethod(self::METHOD),
+            new ResponseType(self::RESPONSE_TYPE)
+        );
 
         $profile = reset($response->response);
 
