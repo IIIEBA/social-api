@@ -4,6 +4,7 @@ namespace SocialAPI\Lib\Model\ApiResponse;
 
 use SocialAPI\Lib\Exception\InvalidArgument\EmptyStringException;
 use SocialAPI\Lib\Exception\InvalidArgument\NotStringException;
+use SocialAPI\Lib\Model\ApiResponse\Enum\ProfileGender;
 
 /**
  * Class Profile
@@ -116,8 +117,8 @@ class Profile implements ProfileInterface
      * @param string $firstName
      * @param null|string $lastName
      * @param null|string $email
-     * @param null|string $gender
-     * @param null|\DateTimeImmutable $birthday
+     * @param ProfileGender|null $gender
+     * @param \DateTimeImmutable|null $birthday
      * @param null|string $avatarUrl
      */
     public function __construct(
@@ -125,8 +126,8 @@ class Profile implements ProfileInterface
         $firstName,
         $lastName = null,
         $email = null,
-        $gender = null,
-        $birthday = null,
+        ProfileGender $gender = null,
+        \DateTimeImmutable $birthday = null,
         $avatarUrl = null
     ) {
         if (is_int($id)) {
@@ -161,18 +162,6 @@ class Profile implements ProfileInterface
             } elseif ($email === '') {
                 throw new EmptyStringException('email');
             }
-        }
-
-        if ($gender !== null) {
-            if (!is_string($gender)) {
-                throw new NotStringException('email');
-            } elseif (!in_array($gender, ['male', 'female'])) {
-                throw new \InvalidArgumentException('Gender can be only [male|female]');
-            }
-        }
-
-        if ($birthday !== null && ($birthday instanceof \DateTimeImmutable) === false) {
-            throw new \InvalidArgumentException('Only DateTimeImmutable allowed for birthday');
         }
 
         if ($avatarUrl !== null) {

@@ -231,14 +231,14 @@ abstract class BaseApi implements ApiInterface, LoggerAwareInterface
      * Send request to API
      *
      * @param string $url
-     * @param array $params
      * @param RequestMethod|string $method Only [post|get] allowed
      * @param ResponseType|string $responseType Only [json] allowed
+     * @param array $params
      *
      * @return mixed
      * @throws BaseApiException
      */
-    public function callApiMethod($url, array $params = [], RequestMethod $method, ResponseType $responseType)
+    public function callApiMethod($url, RequestMethod $method, ResponseType $responseType, array $params = [])
     {
         if ($this->getAccessToken() === null) {
             $msg = 'You need to set access token before use API methods';
@@ -329,7 +329,7 @@ abstract class BaseApi implements ApiInterface, LoggerAwareInterface
                 $result = json_decode($response->getBody());
                 break;
 
-            default;
+            default:
                 $msg = 'Strange response type was given';
                 $this->getLogger()->error(
                     $msg,

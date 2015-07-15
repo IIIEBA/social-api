@@ -2,6 +2,8 @@
 
 namespace SocialAPI\Lib\Model\ApiResponse;
 
+use SocialAPI\Lib\Model\ApiResponse\Enum\ProfileGender;
+
 interface ProfileInterface
 {
     /**
@@ -52,17 +54,17 @@ interface ProfileInterface
      * @param string $firstName
      * @param null|string $lastName
      * @param null|string $email
-     * @param null|string $gender
-     * @param null|\DateTimeImmutable $birthday
+     * @param ProfileGender|null $gender
+     * @param \DateTimeImmutable|null $birthday
      * @param null|string $avatarUrl
      */
     public function __construct(
         $id,
         $firstName,
-        $lastName   = null,
-        $email      = null,
-        $gender     = null,
-        $birthday   = null,
-        $avatarUrl  = null
+        $lastName = null,
+        $email = null,
+        ProfileGender $gender = null,
+        \DateTimeImmutable $birthday = null,
+        $avatarUrl = null
     );
 }

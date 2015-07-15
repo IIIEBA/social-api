@@ -7,6 +7,7 @@ use Facebook\FacebookRequest;
 use Facebook\FacebookSession;
 use SocialAPI\Lib\Component\BaseApi;
 use SocialAPI\Lib\Component\ApiInterface;
+use SocialAPI\Lib\Model\ApiResponse\Enum\ProfileGender;
 use SocialAPI\Lib\Model\ApiResponse\Profile;
 use SocialAPI\Lib\Model\ApiResponse\ProfileInterface;
 use SocialAPI\Module\Facebook\Exception\FacebookModuleException;
@@ -191,21 +192,14 @@ class Facebook extends BaseApi implements ApiInterface
             '/me'
         ))->execute()->getResponse();
 
-        $gender = null;
-        if ($response->gender === 'male') {
-            $gender = 'male';
-        } elseif ($response->gender === 'female') {
-            $gender = 'female';
-        }
-
         $result = new Profile(
             $response->id,
             $response->first_name,
             $response->last_name,
             $response->email,
-            $gender,
-            null,
-            null
+            $this->parseGender($response->gender),
+            $this->parseBirthday(null),
+            $this->parseAvatarUrl(null)
         );
 
         return $result;
@@ -218,7 +212,15 @@ class Facebook extends BaseApi implements ApiInterface
      */
     public function parseGender($gender = null)
     {
-        // TODO: Implement parseGender() method.
+        if ($gender === 'male') {
+            $gender = new ProfileGender(ProfileGender::MALE);
+        } elseif ($gender === 'female') {
+            $gender = new ProfileGender(ProfileGender::FEMALE);
+        } else {
+            $gender = null;
+        }
+
+        return $gender;
     }
 
     /**
@@ -228,7 +230,7 @@ class Facebook extends BaseApi implements ApiInterface
      */
     public function parseBirthday($birthday = null)
     {
-        // TODO: Implement parseBirthday() method.
+        return $birthday;
     }
 
     /**
@@ -238,5 +240,6 @@ class Facebook extends BaseApi implements ApiInterface
      */
     public function parseAvatarUrl($url = null)
     {
-        // TODO: Implement parseAvatarUrl() method.
-}}
+        return $url;
+    }
+}

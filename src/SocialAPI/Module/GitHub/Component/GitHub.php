@@ -167,7 +167,6 @@ class GitHub extends BaseApi
     {
         $profile    = $this->callApiMethod(
             self::API_URL . 'user',
-            [],
             new RequestMethod(self::METHOD),
             new ResponseType(self::RESPONSE_TYPE)
         );
@@ -196,7 +195,6 @@ class GitHub extends BaseApi
         $result = null;
         $emails = $this->callApiMethod(
             self::API_URL . 'user/emails',
-            [],
             new RequestMethod(self::METHOD),
             new ResponseType(self::RESPONSE_TYPE)
         );
@@ -246,7 +244,6 @@ class GitHub extends BaseApi
 
         $profile = $this->callApiMethod(
             self::API_URL . $method,
-            [],
             new RequestMethod(self::METHOD),
             new ResponseType(self::RESPONSE_TYPE)
         );

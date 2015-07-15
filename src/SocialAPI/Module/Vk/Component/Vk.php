@@ -5,6 +5,7 @@ namespace SocialAPI\Module\Vk\Component;
 use GuzzleHttp\Client;
 use SocialAPI\Lib\Component\BaseApi;
 use SocialAPI\Lib\Component\ApiInterface;
+use SocialAPI\Lib\Model\ApiResponse\Enum\ProfileGender;
 use SocialAPI\Lib\Model\ApiResponse\Profile;
 use SocialAPI\Lib\Model\ApiResponse\ProfileInterface;
 use SocialAPI\Lib\Model\Enum\RequestMethod;
@@ -221,9 +222,9 @@ class Vk extends BaseApi implements ApiInterface
         $result     = [];
         $response   = $this->callApiMethod(
             self::API_URL . 'friends.get',
-            ['fields' => $this->getProfileFieldsList()],
             new RequestMethod(self::METHOD),
-            new ResponseType(self::RESPONSE_TYPE)
+            new ResponseType(self::RESPONSE_TYPE),
+            ['fields' => $this->getProfileFieldsList()]
         );
 
         foreach ($response->response as $profile) {
@@ -270,9 +271,9 @@ class Vk extends BaseApi implements ApiInterface
 
         $response = $this->callApiMethod(
             self::API_URL . 'users.get',
-            $params,
             new RequestMethod(self::METHOD),
-            new ResponseType(self::RESPONSE_TYPE)
+            new ResponseType(self::RESPONSE_TYPE),
+            $params
         );
 
         $profile = reset($response->response);
@@ -295,14 +296,12 @@ class Vk extends BaseApi implements ApiInterface
      */
     public function parseGender($gender = null)
     {
-        if ($gender !== null) {
-            if ($gender === 1) {
-                $gender = 'female';
-            } elseif ($gender === 2) {
-                $gender = 'male';
-            } else {
-                $gender = null;
-            }
+        if ($gender === 1) {
+            $gender = new ProfileGender(ProfileGender::FEMALE);
+        } elseif ($gender === 2) {
+            $gender = new ProfileGender(ProfileGender::MALE);
+        } else {
+            $gender = null;
         }
 
         return $gender;

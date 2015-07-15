@@ -190,7 +190,6 @@ class Instagram extends BaseApi implements ApiInterface
         $url        = self::API_URL . "users/{$memberId}/";
         $response   = $this->callApiMethod(
             $url,
-            [],
             new RequestMethod(self::METHOD),
             new ResponseType(self::RESPONSE_TYPE)
         );
@@ -212,8 +211,8 @@ class Instagram extends BaseApi implements ApiInterface
             $firstName,
             $lastName,
             null,
-            $this->parseGender(),
-            $this->parseBirthday(),
+            $this->parseGender(null),
+            $this->parseBirthday(null),
             $this->parseAvatarUrl($profile->profile_picture)
         );
     }

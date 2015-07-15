@@ -7,6 +7,7 @@ use PhpUnitPlus\Lib\Util\Custom\ManualInput;
 use PhpUnitPlus\Lib\Util\Custom\MergeInput;
 use PhpUnitPlus\Lib\Util\Simple\AnyInteger;
 use PhpUnitPlus\Lib\Util\Simple\AnyString;
+use SocialAPI\Lib\Model\ApiResponse\Enum\ProfileGender;
 use SocialAPI\Lib\Model\ApiResponse\Profile;
 
 /**
@@ -29,7 +30,7 @@ class ProfileTest extends \PHPUnit_Framework_TestCase
                 new AnyString(false, false),
                 new AnyString(false, true),
                 new AnyString(false, true),
-                new ManualInput(['male', 'female', null]),
+                new ManualInput([new ProfileGender(ProfileGender::MALE), null]),
                 new ManualInput([new \DateTimeImmutable(), null]),
                 new AnyString(false, true),
             ],
