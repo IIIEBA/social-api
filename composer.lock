@@ -4,7 +4,7 @@
         "Read more about it at http://getcomposer.org/doc/01-basic-usage.md#composer-lock-the-lock-file",
         "This file is @generated automatically"
     ],
-    "hash": "04a4291ef91d6f1122bbae3d3a699862",
+    "hash": "c6ad46d928e7fa26c23ea8bf33e285dd",
     "packages": [
         {
             "name": "ashevchuk/enum",
@@ -461,16 +461,16 @@
     "packages-dev": [
         {
             "name": "ashevchuk/phpunit-plus",
-            "version": "1.1.1",
+            "version": "1.2",
             "source": {
                 "type": "git",
                 "url": "https://github.com/IIIEBA/phpunit-plus.git",
-                "reference": "6404a85d8ed1c57f0c7ff2677b3d3def6b1bf07a"
+                "reference": "63f66e286aef71eb6879ac091766205e6bac3a38"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/IIIEBA/phpunit-plus/zipball/6404a85d8ed1c57f0c7ff2677b3d3def6b1bf07a",
-                "reference": "6404a85d8ed1c57f0c7ff2677b3d3def6b1bf07a",
+                "url": "https://api.github.com/repos/IIIEBA/phpunit-plus/zipball/63f66e286aef71eb6879ac091766205e6bac3a38",
+                "reference": "63f66e286aef71eb6879ac091766205e6bac3a38",
                 "shasum": ""
             },
             "require-dev": {
@@ -491,7 +491,7 @@
                 }
             ],
             "description": "Makes your unit-tests more compact and simpler",
-            "time": "2015-06-23 13:57:50"
+            "time": "2015-07-17 12:36:34"
         },
         {
             "name": "doctrine/instantiator",
