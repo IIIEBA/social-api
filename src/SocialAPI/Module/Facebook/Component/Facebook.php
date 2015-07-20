@@ -66,7 +66,7 @@ class Facebook extends BaseApi implements ApiInterface
      */
     public function generateLoginUrl()
     {
-        $helper   = new FacebookRedirectLoginHelper($this->getConfig()->getRedirectUrl());
+        $helper = new FacebookRedirectLoginHelper($this->getConfig()->getRedirectUrl());
         $helper->disableSessionStatusCheck();
         $loginUrl = $helper->getLoginUrl($this->getConfig()->getScopeList());
 
@@ -225,7 +225,7 @@ class Facebook extends BaseApi implements ApiInterface
 
     /**
      * Convert API birthday to single format
-     * @param null $birthday
+     * @param string|null $birthday
      * @return \DateTimeImmutable|null
      */
     public function parseBirthday($birthday = null)
@@ -235,8 +235,8 @@ class Facebook extends BaseApi implements ApiInterface
 
     /**
      * Convert API avatar url to general format
-     * @param null|string $url
-     * @return null
+     * @param string|null $url
+     * @return string|null
      */
     public function parseAvatarUrl($url = null)
     {

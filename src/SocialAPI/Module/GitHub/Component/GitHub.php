@@ -43,7 +43,7 @@ class GitHub extends BaseApi
      */
     public function initApi()
     {
-        // TODO: Implement initApi() method.
+        // Do nothing
     }
 
     /**
@@ -282,9 +282,9 @@ class GitHub extends BaseApi
     /**
      * Convert API gender to single format
      *
-     * @param null|int $gender
+     * @param string|null $gender
      *
-     * @return null|string
+     * @return string|null
      */
     public function parseGender($gender = null)
     {
@@ -294,7 +294,7 @@ class GitHub extends BaseApi
     /**
      * Convert API birthday to single format
      *
-     * @param null $birthday
+     * @param string|null $birthday
      *
      * @return \DateTimeImmutable|null
      */
@@ -306,9 +306,9 @@ class GitHub extends BaseApi
     /**
      * Convert API avatar url to general format
      *
-     * @param null|string $url
+     * @param string|null $url
      *
-     * @return null
+     * @return string|null
      */
     public function parseAvatarUrl($url = null)
     {

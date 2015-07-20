@@ -46,7 +46,7 @@ class Vk extends BaseApi implements ApiInterface
 
     /**
      * List of fields which need to get
-     * @var string
+     * @var array
      */
     private $profileFieldsList;
 
@@ -80,16 +80,13 @@ class Vk extends BaseApi implements ApiInterface
      */
     public function initApi()
     {
-        $this->profileFieldsList = implode(
-            ',',
-            [
-                'sex',
-                'bdate',
-                'photo_max_orig',
-                'contacts',
-                'email'
-            ]
-        );
+        $this->profileFieldsList = [
+            'sex',
+            'bdate',
+            'photo_max_orig',
+            'contacts',
+            'email'
+        ];
     }
 
     /**
@@ -128,9 +125,9 @@ class Vk extends BaseApi implements ApiInterface
     /**
      * Generate access token from code
      *
-*@param string $code
+     * @param string $code
      *
-*@return string
+     * @return string
      * @throws VkModuleApiException
      */
     public function generateAccessTokenFromCode($code)
@@ -224,7 +221,7 @@ class Vk extends BaseApi implements ApiInterface
             self::API_URL . 'friends.get',
             new RequestMethod(self::METHOD),
             new ResponseType(self::RESPONSE_TYPE),
-            ['fields' => $this->getProfileFieldsList()]
+            ['fields' => implode(',', $this->getProfileFieldsList())]
         );
 
         foreach ($response->response as $profile) {
@@ -250,7 +247,7 @@ class Vk extends BaseApi implements ApiInterface
     public function getProfile($memberId = null)
     {
         $params = [
-            'fields' => $this->getProfileFieldsList()
+            'fields' => implode(',', $this->getProfileFieldsList()),
         ];
 
         if ($memberId !== null) {
@@ -291,8 +288,8 @@ class Vk extends BaseApi implements ApiInterface
 
     /**
      * Convert Vk gender to single format
-     * @param null|int $gender
-     * @return null|string
+     * @param int|null $gender
+     * @return ProfileGender|null
      */
     public function parseGender($gender = null)
     {
@@ -309,7 +306,7 @@ class Vk extends BaseApi implements ApiInterface
 
     /**
      * Convert Vk birthday to general format
-     * @param null $birthday
+     * @param string|null $birthday
      * @return \DateTimeImmutable|null
      */
     public function parseBirthday($birthday = null)
@@ -328,8 +325,8 @@ class Vk extends BaseApi implements ApiInterface
 
     /**
      * Convert Vk avatar url to general format
-     * @param null|string $url
-     * @return null
+     * @param string|null $url
+     * @return string|null
      */
     public function parseAvatarUrl($url = null)
     {

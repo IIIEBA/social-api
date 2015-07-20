@@ -219,8 +219,8 @@ class Instagram extends BaseApi implements ApiInterface
 
     /**
      * Convert API gender to single format
-     * @param null|int $gender
-     * @return null|string
+     * @param int|null $gender
+     * @return string|null
      */
     public function parseGender($gender = null)
     {
@@ -229,7 +229,7 @@ class Instagram extends BaseApi implements ApiInterface
 
     /**
      * Convert API birthday to single format
-     * @param null $birthday
+     * @param string|null $birthday
      * @return \DateTimeImmutable|null
      */
     public function parseBirthday($birthday = null)
@@ -239,8 +239,8 @@ class Instagram extends BaseApi implements ApiInterface
 
     /**
      * Convert API avatar url to general format
-     * @param null|string $url
-     * @return null
+     * @param string|null $url
+     * @return string|null
      */
     public function parseAvatarUrl($url = null)
     {
