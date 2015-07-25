@@ -461,16 +461,16 @@
     "packages-dev": [
         {
             "name": "ashevchuk/phpunit-plus",
-            "version": "1.2",
+            "version": "1.2.1",
             "source": {
                 "type": "git",
                 "url": "https://github.com/IIIEBA/phpunit-plus.git",
-                "reference": "63f66e286aef71eb6879ac091766205e6bac3a38"
+                "reference": "2e763c46602fd5f441f9ff462d5ba782393be56f"
             },
             "dist": {
                 "type": "zip",
-                "url": "https://api.github.com/repos/IIIEBA/phpunit-plus/zipball/63f66e286aef71eb6879ac091766205e6bac3a38",
-                "reference": "63f66e286aef71eb6879ac091766205e6bac3a38",
+                "url": "https://api.github.com/repos/IIIEBA/phpunit-plus/zipball/2e763c46602fd5f441f9ff462d5ba782393be56f",
+                "reference": "2e763c46602fd5f441f9ff462d5ba782393be56f",
                 "shasum": ""
             },
             "require-dev": {
@@ -491,7 +491,7 @@
                 }
             ],
             "description": "Makes your unit-tests more compact and simpler",
-            "time": "2015-07-17 12:36:34"
+            "time": "2015-07-25 14:05:15"
         },
         {
             "name": "doctrine/instantiator",
