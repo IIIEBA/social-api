@@ -17,7 +17,7 @@
         }
     },
     "bin": [
-      "bin/social-api"
+        "bin/social-api"
     ],
 
     "require": {

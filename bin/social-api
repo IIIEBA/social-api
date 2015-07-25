@@ -1,36 +1,31 @@
 #!/usr/bin/env php
 <?php
 
-define('COMMAND_PATTERN', 'Command.php');
-
-// Looking for composer
-if (file_exists(__DIR__ . '/../vendor/autoload.php')) {
-    require __DIR__ . '/../vendor/autoload.php';
-} else {
-    echo "\n****** No composer autoload file was found ******\n\n";
-    exit;
+// Set default timezone
+if (!ini_get('date.timezone')) {
+    ini_set('date.timezone', 'UTC');
 }
 
-// Looking for commands folder
-if (is_dir(__DIR__ . '/../src/SocialAPI/Lib/Command')) {
-    define('COMMAND_PATH', __DIR__ . '/../src/SocialAPI/Lib/Command');
-} else {
-    echo "\n****** No command folder was found ******\n\n";
-    exit;
-}
-
-// Init console application
-use Symfony\Component\Console\Application;
-
-$app = new Application();
-
-// Add commands
-$commandList = scandir(COMMAND_PATH);
-foreach ($commandList as $name) {
-    if (strpos($name, COMMAND_PATTERN)) {
-        $name = "SocialAPI\\Lib\\Command\\" . str_replace('.php', '', $name);
-        $app->add(new $name());
+// Search for composer autoload filepath
+$autoloadPathList = [
+    __DIR__ . '/../../autoload.php',
+    __DIR__ . '/../vendor/autoload.php',
+    __DIR__ . '/vendor/autoload.php',
+];
+foreach ($autoloadPathList as $file) {
+    if (file_exists($file)) {
+        define('COMPOSER_AUTOLOAD', $file);
+        break;
     }
 }
+unset($file);
 
-$app->run();
+// Init composer autoload file
+if (defined('COMPOSER_AUTOLOAD')) {
+    require COMPOSER_AUTOLOAD;
+} else {
+    fwrite(STDERR, 'No composer autoload file was found, try composer install/update' . PHP_EOL);
+    exit;
+}
+
+\SocialAPI\Lib\Component\SocialApiCommand::run();
