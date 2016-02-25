@@ -21,8 +21,8 @@
     ],
 
     "require": {
-        "php-64bit": ">=5.5",
-        "psr/log": "*",
+        "php-64bit": ">=5.6",
+        "psr/log": "^1.0.0",
         "facebook/php-sdk-v4": "^5.1.2",
         "guzzlehttp/guzzle": "^6.1.1",
         "symfony/http-foundation": "^3.0.2",
