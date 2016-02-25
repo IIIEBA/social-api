@@ -2,7 +2,6 @@
 
 namespace SocialAPI\Lib\Component;
 
-use Psr\Log\LoggerInterface;
 use SocialAPI\Lib\Model\ApiResponse\ProfileInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -13,14 +12,6 @@ use Symfony\Component\HttpFoundation\Request;
  */
 interface ApiInterface
 {
-    /**
-     * Set few basic elements of api
-     * @param ApiConfigInterface $config
-     * @param Request $request
-     * @param LoggerInterface $logger
-     */
-    public function __construct(ApiConfigInterface $config, Request $request, LoggerInterface $logger = null);
-
     /**
      * Get config
      * @return ApiConfigInterface
