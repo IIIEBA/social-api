@@ -6,7 +6,6 @@ use SocialApi\Lib\ApiInterface;
 use SocialApi\Lib\Component\BaseApi;
 use SocialAPI\Lib\Model\Enum\Gender;
 use SocialApi\Lib\Model\ProfileInterface;
-use Symfony\Component\HttpFoundation\Response;
 
 /**
  * Class FacebookApi
@@ -32,17 +31,6 @@ class FacebookApi extends BaseApi implements ApiInterface
     public function generateLogoutUrl()
     {
         // TODO: Implement generateLogoutUrl() method.
-    }
-
-    /**
-     * Parse request from API and generate access token
-     *
-     * @param Response $response
-     * @return string
-     */
-    public function parseLoginResponse(Response $response)
-    {
-        // TODO: Implement parseLoginResponse() method.
     }
 
     /**
@@ -120,7 +108,7 @@ class FacebookApi extends BaseApi implements ApiInterface
      * Convert API birthday to single format
      *
      * @param null|string $birthday
-     * @return \DateTimeImmutable|null
+     * @return \DateTimeInterface|null
      */
     public function parseBirthday($birthday = null)
     {

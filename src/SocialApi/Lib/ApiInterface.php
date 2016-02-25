@@ -3,9 +3,12 @@
 namespace SocialApi\Lib;
 
 use GuzzleHttp\Client;
+use SocialApi\Lib\Exception\SocialApiException;
+use SocialApi\Lib\Model\AccessTokenInterface;
+use SocialApi\Lib\Model\ApiConfigInterface;
 use SocialAPI\Lib\Model\Enum\Gender;
 use SocialApi\Lib\Model\ProfileInterface;
-use Symfony\Component\HttpFoundation\Response;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class ApiInterface
@@ -14,19 +17,24 @@ use Symfony\Component\HttpFoundation\Response;
 interface ApiInterface
 {
     /**
+     * @return ApiConfigInterface
+     */
+    public function getApiConfig();
+
+    /**
      * @return Client
      */
     public function getHttpClient();
 
     /**
-     * @param string $token
+     * @param AccessTokenInterface $token
      */
-    public function setToken($token);
+    public function setAccessToken($token);
 
     /**
-     * @return null|string
+     * @return null|AccessTokenInterface
      */
-    public function getToken();
+    public function getAccessToken();
 
     /**
      * Generate login url
@@ -45,16 +53,17 @@ interface ApiInterface
     /**
      * Parse request from API and generate access token
      *
-     * @param Response $response
-     * @return string
+     * @param Request $request
+     * @return AccessTokenInterface
      */
-    public function parseLoginResponse(Response $response);
+    public function parseLoginResponse(Request $request);
 
     /**
      * Generate access token from code
      *
      * @param string $code
      * @return string
+     * @throws SocialApiException
      */
     public function generateAccessTokenFromCode($code);
 
@@ -106,7 +115,7 @@ interface ApiInterface
      * Convert API birthday to single format
      *
      * @param null|string $birthday
-     * @return \DateTimeImmutable|null
+     * @return \DateTimeInterface|null
      */
     public function parseBirthday($birthday = null);
 

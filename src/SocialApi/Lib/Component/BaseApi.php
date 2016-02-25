@@ -8,11 +8,13 @@ use GuzzleHttp\ClientInterface;
 use Psr\Log\LoggerInterface;
 use SocialApi\Lib\ApiInterface;
 use SocialApi\Lib\Exception\SocialApiException;
+use SocialApi\Lib\Model\AccessTokenInterface;
 use SocialApi\Lib\Model\ApiConfigInterface;
 use SocialAPI\Lib\Model\Enum\RequestMethod;
 use SocialAPI\Lib\Model\Enum\ResponseType;
 use SocialApi\Lib\Model\ProfileInterface;
 use SocialAPI\Lib\Util\Logger\LoggerTrait;
+use Symfony\Component\HttpFoundation\Request;
 
 /**
  * Class BaseApi
@@ -33,7 +35,7 @@ abstract class BaseApi implements ApiInterface
     private $httpClient;
 
     /**
-     * @var string|null
+     * @var AccessTokenInterface|null
      */
     private $token;
 
@@ -57,6 +59,14 @@ abstract class BaseApi implements ApiInterface
     }
 
     /**
+     * @return ApiConfigInterface
+     */
+    public function getApiConfig()
+    {
+        return $this->apiConfig;
+    }
+
+    /**
      * @return Client
      */
     public function getHttpClient()
@@ -65,9 +75,9 @@ abstract class BaseApi implements ApiInterface
     }
 
     /**
-     * @param string $token
+     * @param AccessTokenInterface $token
      */
-    public function setToken($token)
+    public function setAccessToken($token)
     {
         if (!is_string($token)) {
             throw new NotStringException("token");
@@ -77,11 +87,32 @@ abstract class BaseApi implements ApiInterface
     }
 
     /**
-     * @return null|string
+     * @return null|AccessTokenInterface
      */
-    public function getToken()
+    public function getAccessToken()
     {
         return $this->token;
+    }
+
+    /**
+     * Parse request from API and generate access token
+     *
+     * @param Request $request
+     * @return AccessTokenInterface
+     * @throws SocialApiException
+     */
+    public function parseLoginResponse(Request $request)
+    {
+        $accessToken = null;
+        if ($request->get('code') !== null) {
+            $accessToken = $this->generateAccessTokenFromCode($request->get('code'));
+        } elseif (!is_null($request->get('error'))) {
+            throw new SocialApiException(
+                "Failed to parse response from API with error: " . $this->getRequest()->get('error_description')
+            );
+        }
+
+        return $accessToken;
     }
 
     /**
@@ -101,16 +132,18 @@ abstract class BaseApi implements ApiInterface
      * @param RequestMethod $method
      * @param ResponseType $type
      * @param array $params
-     * @return mixed
+     * @param bool $isTokenRequired
+     * @return object
      * @throws SocialApiException
      */
     public function callApiMethod(
         $url,
         RequestMethod $method,
         ResponseType $type,
-        array $params = []
+        array $params = [],
+        $isTokenRequired = true
     ) {
-        if (is_null($this->getToken())) {
+        if ($isTokenRequired && is_null($this->getAccessToken())) {
             throw new SocialApiException("You need to set access token before use API methods");
         }
 
@@ -124,7 +157,11 @@ abstract class BaseApi implements ApiInterface
                 'Accept' => 'application/json',
             ],
         ];
-        $params = array_merge(['access_token' => $this->getToken()], $params);
+
+        // Add token to params if required
+        if ($isTokenRequired) {
+            $params = array_merge(['access_token' => $this->getAccessToken()->getToken()], $params);
+        }
 
         // Trying to send request
         try {
