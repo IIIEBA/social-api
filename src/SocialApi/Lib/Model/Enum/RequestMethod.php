@@ -1,6 +1,6 @@
 <?php
 
-namespace SocialAPI\Lib\Model\Enum;
+namespace SocialApi\Lib\Model\Enum;
 
 use Enum\Lib\Enum;
 
