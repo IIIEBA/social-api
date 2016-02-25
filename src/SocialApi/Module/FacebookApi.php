@@ -2,10 +2,18 @@
 
 namespace SocialApi\Module;
 
+use BaseExceptions\Exception\InvalidArgument\EmptyStringException;
+use BaseExceptions\Exception\InvalidArgument\NotStringException;
+use Facebook\Facebook;
+use Psr\Log\LoggerInterface;
 use SocialApi\Lib\ApiInterface;
 use SocialApi\Lib\Component\BaseApi;
+use SocialApi\Lib\Exception\SocialApiException;
+use SocialApi\Lib\Model\AccessToken;
 use SocialApi\Lib\Model\AccessTokenInterface;
+use SocialApi\Lib\Model\ApiConfigInterface;
 use SocialApi\Lib\Model\Enum\Gender;
+use SocialApi\Lib\Model\Profile;
 use SocialApi\Lib\Model\ProfileInterface;
 
 /**
@@ -15,13 +23,39 @@ use SocialApi\Lib\Model\ProfileInterface;
 class FacebookApi extends BaseApi implements ApiInterface
 {
     /**
+     * @var Facebook
+     */
+    private $facebook;
+
+    /**
+     * FacebookApi constructor.
+     * @param ApiConfigInterface $apiConfig
+     * @param LoggerInterface $logger
+     */
+    public function __construct(
+        ApiConfigInterface $apiConfig,
+        LoggerInterface $logger = null
+    ) {
+        parent::__construct($apiConfig, $logger);
+
+        $this->facebook = new Facebook([
+            'app_id' => $this->getApiConfig()->getAppId(),
+            'app_secret' => $this->getApiConfig()->getAppSecret(),
+            'default_graph_version' => 'v2.5',
+        ]);
+    }
+
+    /**
      * Generate login url
      *
      * @return string
      */
     public function generateLoginUrl()
     {
-        // TODO: Implement generateLoginUrl() method.
+        return $this->facebook->getRedirectLoginHelper()->getLoginUrl(
+            $this->getApiConfig()->getRedirectUrl(),
+            $this->getApiConfig()->getScopeList()
+        );
     }
 
     /**
@@ -31,7 +65,19 @@ class FacebookApi extends BaseApi implements ApiInterface
      */
     public function generateLogoutUrl()
     {
-        // TODO: Implement generateLogoutUrl() method.
+        return $this->facebook->getRedirectLoginHelper()->getLogoutUrl(
+            $this->getAccessToken()->getToken(),
+            "/"
+        );
+    }
+
+    /**
+     * @param AccessTokenInterface $token
+     */
+    public function setAccessToken(AccessTokenInterface $token)
+    {
+        $this->token = $token;
+        $this->facebook->setDefaultAccessToken($token->getToken());
     }
 
     /**
@@ -39,10 +85,38 @@ class FacebookApi extends BaseApi implements ApiInterface
      *
      * @param string $code
      * @return AccessTokenInterface
+     * @throws SocialApiException
      */
     public function generateAccessTokenFromCode($code)
     {
-        // TODO: Implement generateAccessTokenFromCode() method.
+        if (!is_string($code)) {
+            throw new NotStringException("code");
+        }
+        if (empty($code)) {
+            throw new EmptyStringException("code");
+        }
+
+        // Set correct code to GET, because our SDK would take it from there
+        $_GET["code"] = $code;
+
+        try {
+            $token = $this->facebook->getOAuth2Client()->getLongLivedAccessToken(
+                $this->facebook->getRedirectLoginHelper()->getAccessToken(
+                    $this->getApiConfig()->getRedirectUrl()
+                )
+            );
+
+            $this->setAccessToken(
+                new AccessToken(
+                    $token->getValue(),
+                    $token->getExpiresAt()
+                )
+            );
+        } catch (\Exception $error) {
+            throw new SocialApiException("Cant get access token with message: " . $error->getMessage(), 0, $error);
+        }
+
+        return $this->getAccessToken();
     }
 
     /**
@@ -53,6 +127,33 @@ class FacebookApi extends BaseApi implements ApiInterface
     public function getPermissions()
     {
         // TODO: Implement getPermissions() method.
+    }
+
+    /**
+     * Get current user profile data
+     *
+     * @return ProfileInterface
+     * @throws SocialApiException
+     */
+    public function getCurrentProfile()
+    {
+        try {
+            $response = $this->facebook->get('/me');
+            $userNode = $response->getGraphUser();
+        } catch (\Exception $error) {
+            throw new SocialApiException("Cant get current user with message: " . $error->getMessage(), 0, $error);
+        }
+
+        $result = new Profile(
+            $userNode->getId(),
+            $userNode->getFirstName(),
+            $userNode->getLastName(),
+            $userNode->getEmail(),
+            $this->parseGender($userNode->getGender()),
+            $this->parseBirthday($userNode->getBirthday()),
+            $this->parseAvatarUrl($userNode->getPicture())
+        );
+        return $result;
     }
 
     /**
@@ -113,7 +214,7 @@ class FacebookApi extends BaseApi implements ApiInterface
      */
     public function parseBirthday($birthday = null)
     {
-        // TODO: Implement parseBirthday() method.
+        return new \DateTimeImmutable(date("c", $birthday + 3600 * 60));
     }
 
     /**

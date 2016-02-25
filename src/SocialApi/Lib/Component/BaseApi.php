@@ -32,12 +32,12 @@ abstract class BaseApi implements ApiInterface
     /**
      * @var ClientInterface
      */
-    private $httpClient;
+    protected $httpClient;
 
     /**
      * @var AccessTokenInterface|null
      */
-    private $token;
+    protected $token;
 
     /**
      * BaseApi constructor.
