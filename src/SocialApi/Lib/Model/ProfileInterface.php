@@ -2,7 +2,7 @@
 
 namespace SocialApi\Lib\Model;
 
-use SocialAPI\Lib\Model\Enum\Gender;
+use SocialApi\Lib\Model\Enum\Gender;
 
 /**
  * Class Profile

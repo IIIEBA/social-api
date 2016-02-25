@@ -4,13 +4,16 @@ namespace SocialApi\Module;
 
 use BaseExceptions\Exception\InvalidArgument\EmptyStringException;
 use BaseExceptions\Exception\InvalidArgument\NotStringException;
+use BaseExceptions\Exception\LogicException\NotImplementedException;
 use SocialApi\Lib\ApiInterface;
 use SocialApi\Lib\Component\BaseApi;
 use SocialApi\Lib\Exception\NotAllowed\NoActionException;
 use SocialApi\Lib\Exception\SocialApiException;
-use SocialAPI\Lib\Model\Enum\Gender;
-use SocialAPI\Lib\Model\Enum\RequestMethod;
-use SocialAPI\Lib\Model\Enum\ResponseType;
+use SocialApi\Lib\Model\AccessToken;
+use SocialApi\Lib\Model\AccessTokenInterface;
+use SocialApi\Lib\Model\Enum\Gender;
+use SocialApi\Lib\Model\Enum\RequestMethod;
+use SocialApi\Lib\Model\Enum\ResponseType;
 use SocialApi\Lib\Model\Profile;
 use SocialApi\Lib\Model\ProfileInterface;
 
@@ -61,16 +64,14 @@ class GitHubApi extends BaseApi implements ApiInterface
      */
     public function generateLogoutUrl()
     {
-        // TODO: Implement generateLogoutUrl() method.
-
-        return "/";
+        throw new NotImplementedException();
     }
 
     /**
      * Generate access token from code
      *
      * @param string $code
-     * @return string
+     * @return AccessTokenInterface
      * @throws SocialApiException
      */
     public function generateAccessTokenFromCode($code)
@@ -96,7 +97,7 @@ class GitHubApi extends BaseApi implements ApiInterface
             throw new SocialApiException("Access token missed in response");
         }
 
-        $this->setAccessToken($result->access_token);
+        $this->setAccessToken(new AccessToken($result->access_token));
 
         return $this->getAccessToken();
     }
@@ -131,8 +132,8 @@ class GitHubApi extends BaseApi implements ApiInterface
             $firstName,
             $lastName,
             $email,
-            $this->parseGender(null),
-            $this->parseBirthday(null),
+            null,
+            null,
             $this->parseAvatarUrl($profile->avatar_url)
         );
     }
@@ -189,8 +190,8 @@ class GitHubApi extends BaseApi implements ApiInterface
             $firstName,
             $lastName,
             $profile->email,
-            $this->parseGender(null),
-            $this->parseBirthday(null),
+            null,
+            null,
             $this->parseAvatarUrl($profile->avatar_url)
         );
     }
@@ -225,9 +226,7 @@ class GitHubApi extends BaseApi implements ApiInterface
      */
     public function parseGender($gender = null)
     {
-        // TODO: Implement parseGender() method.
-
-        return null;
+        throw new NotImplementedException();
     }
 
     /**
@@ -238,9 +237,7 @@ class GitHubApi extends BaseApi implements ApiInterface
      */
     public function parseBirthday($birthday = null)
     {
-        // TODO: Implement parseBirthday() method.
-
-        return null;
+        throw new NotImplementedException();
     }
 
     /**

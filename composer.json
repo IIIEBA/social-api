@@ -13,7 +13,7 @@
 
     "autoload": {
         "psr-0": {
-            "SocialAPI\\": "src"
+            "SocialApi": "src"
         }
     },
     "bin": [
@@ -23,7 +23,7 @@
     "require": {
         "php-64bit": ">=5.5",
         "psr/log": "*",
-        "facebook/php-sdk-v4": "^5.1.2)",
+        "facebook/php-sdk-v4": "^5.1.2",
         "guzzlehttp/guzzle": "^6.1.1",
         "symfony/http-foundation": "^3.0.2",
         "ashevchuk/enum": "^0.1.3",

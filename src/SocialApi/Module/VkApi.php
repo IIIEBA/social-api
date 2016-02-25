@@ -4,7 +4,8 @@ namespace SocialApi\Module;
 
 use SocialApi\Lib\ApiInterface;
 use SocialApi\Lib\Component\BaseApi;
-use SocialAPI\Lib\Model\Enum\Gender;
+use SocialApi\Lib\Model\AccessTokenInterface;
+use SocialApi\Lib\Model\Enum\Gender;
 use SocialApi\Lib\Model\ProfileInterface;
 
 /**
@@ -37,7 +38,7 @@ class VkApi extends BaseApi implements ApiInterface
      * Generate access token from code
      *
      * @param string $code
-     * @return string
+     * @return AccessTokenInterface
      */
     public function generateAccessTokenFromCode($code)
     {

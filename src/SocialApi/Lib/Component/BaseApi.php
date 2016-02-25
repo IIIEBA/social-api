@@ -10,10 +10,10 @@ use SocialApi\Lib\ApiInterface;
 use SocialApi\Lib\Exception\SocialApiException;
 use SocialApi\Lib\Model\AccessTokenInterface;
 use SocialApi\Lib\Model\ApiConfigInterface;
-use SocialAPI\Lib\Model\Enum\RequestMethod;
-use SocialAPI\Lib\Model\Enum\ResponseType;
+use SocialApi\Lib\Model\Enum\RequestMethod;
+use SocialApi\Lib\Model\Enum\ResponseType;
 use SocialApi\Lib\Model\ProfileInterface;
-use SocialAPI\Lib\Util\Logger\LoggerTrait;
+use SocialApi\Lib\Util\Logger\LoggerTrait;
 use Symfony\Component\HttpFoundation\Request;
 
 /**
@@ -77,12 +77,8 @@ abstract class BaseApi implements ApiInterface
     /**
      * @param AccessTokenInterface $token
      */
-    public function setAccessToken($token)
+    public function setAccessToken(AccessTokenInterface $token)
     {
-        if (!is_string($token)) {
-            throw new NotStringException("token");
-        }
-
         $this->token = $token;
     }
 
@@ -103,16 +99,15 @@ abstract class BaseApi implements ApiInterface
      */
     public function parseLoginResponse(Request $request)
     {
-        $accessToken = null;
-        if ($request->get('code') !== null) {
-            $accessToken = $this->generateAccessTokenFromCode($request->get('code'));
+        if (is_null($request->get('code'))) {
+            throw new SocialApiException("No code was found in response");
         } elseif (!is_null($request->get('error'))) {
             throw new SocialApiException(
                 "Failed to parse response from API with error: " . $this->getRequest()->get('error_description')
             );
         }
 
-        return $accessToken;
+        return $this->generateAccessTokenFromCode($request->get('code'));
     }
 
     /**
@@ -199,7 +194,8 @@ abstract class BaseApi implements ApiInterface
 
         // Checking response for errors
         if (isset($result->error)) {
-            throw new SocialApiException("Request to API was unsuccessful with error: " . $result->error->error_msg);
+            $errMsg = is_object($result->error) ? $result->error->error_msg : $result->error;
+            throw new SocialApiException("Request to API was unsuccessful with error: " . $errMsg);
         }
 
         return $result;

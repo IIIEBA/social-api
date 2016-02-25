@@ -5,7 +5,7 @@ namespace SocialApi\Lib\Model;
 use BaseExceptions\Exception\InvalidArgument\EmptyStringException;
 use BaseExceptions\Exception\InvalidArgument\NotPositiveNumericException;
 use BaseExceptions\Exception\InvalidArgument\NotStringException;
-use SocialAPI\Lib\Model\Enum\Gender;
+use SocialApi\Lib\Model\Enum\Gender;
 
 /**
  * Class Profile

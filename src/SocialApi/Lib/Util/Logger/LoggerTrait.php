@@ -1,6 +1,6 @@
 <?php
 
-namespace SocialAPI\Lib\Util\Logger;
+namespace SocialApi\Lib\Util\Logger;
 
 use Psr\Log\LoggerInterface;
 use Psr\Log\NullLogger;

@@ -7,7 +7,7 @@ use SocialApi\Lib\Exception\SocialApiException;
 use SocialApi\Lib\Model\ApiConfigInterface;
 use SocialApi\Lib\Model\Enum\ApiName;
 use SocialApi\Lib\Model\SocialApiConfigInterface;
-use SocialAPI\Lib\Util\Logger\LoggerTrait;
+use SocialApi\Lib\Util\Logger\LoggerTrait;
 use SocialApi\Module\FacebookApi;
 use SocialApi\Module\GitHubApi;
 use SocialApi\Module\VkApi;
@@ -52,7 +52,7 @@ class SocialApi implements SocialApiInterface
     public function getConfig(ApiName $name)
     {
         if (!array_key_exists($name->getValue(), $this->apiConfigList)) {
-            throw new \LogicException("No config was found for api - " . $name->getValue());
+            throw new \LogicException("No config was found for API - " . $name->getValue());
         }
 
         return $this->apiConfigList[$name->getValue()];
@@ -67,6 +67,10 @@ class SocialApi implements SocialApiInterface
      */
     public function getApi(ApiName $name)
     {
+        if (!$this->getConfig($name)->isEnabled()) {
+            throw new SocialApiException("Selected API is disabled by config");
+        }
+
         switch ($name->getValue()) {
             case ApiName::FACEBOOK:
                 return new FacebookApi($this->getConfig($name), $this->getLogger());

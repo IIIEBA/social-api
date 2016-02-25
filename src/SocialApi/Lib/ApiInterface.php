@@ -6,7 +6,7 @@ use GuzzleHttp\Client;
 use SocialApi\Lib\Exception\SocialApiException;
 use SocialApi\Lib\Model\AccessTokenInterface;
 use SocialApi\Lib\Model\ApiConfigInterface;
-use SocialAPI\Lib\Model\Enum\Gender;
+use SocialApi\Lib\Model\Enum\Gender;
 use SocialApi\Lib\Model\ProfileInterface;
 use Symfony\Component\HttpFoundation\Request;
 
@@ -29,7 +29,7 @@ interface ApiInterface
     /**
      * @param AccessTokenInterface $token
      */
-    public function setAccessToken($token);
+    public function setAccessToken(AccessTokenInterface $token);
 
     /**
      * @return null|AccessTokenInterface
@@ -62,7 +62,7 @@ interface ApiInterface
      * Generate access token from code
      *
      * @param string $code
-     * @return string
+     * @return AccessTokenInterface
      * @throws SocialApiException
      */
     public function generateAccessTokenFromCode($code);
