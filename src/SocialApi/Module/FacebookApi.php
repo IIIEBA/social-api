@@ -29,6 +29,7 @@ class FacebookApi extends BaseApi implements ApiInterface
 
     /**
      * FacebookApi constructor.
+     *
      * @param ApiConfigInterface $apiConfig
      * @param LoggerInterface $logger
      */
@@ -214,7 +215,7 @@ class FacebookApi extends BaseApi implements ApiInterface
      */
     public function parseBirthday($birthday = null)
     {
-        return new \DateTimeImmutable(date("c", $birthday + 3600 * 60));
+        return new \DateTimeImmutable(date("c", $birthday));
     }
 
     /**
