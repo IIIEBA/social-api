@@ -10,6 +10,7 @@ use SocialApi\Lib\Model\SocialApiConfigInterface;
 use SocialApi\Lib\Util\Logger\LoggerTrait;
 use SocialApi\Module\FacebookApi;
 use SocialApi\Module\GitHubApi;
+use SocialApi\Module\InstagramApi;
 use SocialApi\Module\VkApi;
 
 /**
@@ -83,6 +84,10 @@ class SocialApi implements SocialApiInterface
             case ApiName::GITHUB:
                 return new GitHubApi($this->getConfig($name), $this->getLogger());
                 break;
+
+            case ApiName::INSTAGRAM:
+                return new InstagramApi($this->getConfig($name), $this->getLogger());
+            break;
 
             default:
                 throw new SocialApiException("This API does not have realisation, yet");
